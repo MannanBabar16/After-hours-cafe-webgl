@@ -68,6 +68,8 @@ npm run preview
 
 The production build is in `dist/`; serve it over HTTP, rather than opening `index.html` directly. Dependencies are locked in `package-lock.json`. GitHub Actions runs the game tests and production build, then attaches the compiled game as a downloadable artifact. See [Contributing](CONTRIBUTING.md) for the development workflow and [Architecture](docs/ARCHITECTURE.md) for the source map.
 
+**CI status at setup:** local installation, all 20 tests, and the production build passed. GitHub currently stops this repository's runs before creating a job; cloud checks have not passed yet. See [Validation](VALIDATION.md) for the recorded status. A packaged build is available under [Releases](https://github.com/MannanBabar16/after-hours-cafe-webgl/releases).
+
 ## Your first cup
 
 1. Press **E** near the machine. Choose Espresso and the house blend.

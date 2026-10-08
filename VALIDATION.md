@@ -18,6 +18,7 @@ Validated in Chrome on Windows, 8 October 2026.
 - All 20 tests passed after the test-tool upgrade. Strict TypeScript compilation and the production build passed again.
 - README image paths were checked; the illustrated SVG banner was rendered in Chrome and visually reviewed.
 - GitHub Actions uses Node.js 22, the committed lockfile, the same tests, and the production build. It retains a downloadable compiled-game artifact for 14 days.
+- GitHub Actions is enabled, the workflow is registered, and the official action references were verified through GitHub's API and pinned to commit SHAs. Push and manual runs both failed before any job was created (`startup_failure`, zero jobs). Cloud execution remains unverified; local installation, tests, and build passed. Check the [Actions page](https://github.com/MannanBabar16/after-hours-cafe-webgl/actions) and account Actions/billing availability before expecting a CI artifact. No billing settings were changed.
 
 ## Performance and limits
 
