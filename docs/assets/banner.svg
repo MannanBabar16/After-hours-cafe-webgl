@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-labelledby="title desc">
+  <title id="title">After Hours Café — Coffee craft and café life</title>
+  <desc id="desc">A warm ivory title and an illustrated coffee cup, plant, and moon against a rainy midnight green background.</desc>
+  <defs>
+    <linearGradient id="night" x2="1" y2="1"><stop stop-color="#172d32"/><stop offset="1" stop-color="#28443b"/></linearGradient>
+    <linearGradient id="cup" x2="0" y2="1"><stop stop-color="#fff3d7"/><stop offset="1" stop-color="#d4c39c"/></linearGradient>
+    <pattern id="rain" width="84" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(12)"><path d="M12 10v18M58 48v12" stroke="#c4d7ce" stroke-opacity=".1" stroke-width="2"/></pattern>
+  </defs>
+  <rect width="1200" height="400" rx="20" fill="url(#night)"/>
+  <rect width="1200" height="400" rx="20" fill="url(#rain)"/>
+  <rect x="22" y="22" width="1156" height="356" rx="12" fill="none" stroke="#e4c786" stroke-opacity=".25"/>
+  <path d="M57 81h32" stroke="#e4c786" stroke-width="2"/>
+  <text x="102" y="86" font-family="Arial, sans-serif" font-size="13" letter-spacing="4" fill="#e4c786">A LITTLE SOMETHING WARM</text>
+  <text x="56" y="175" font-family="Georgia, serif" font-size="66" fill="#f8eed7">After Hours Café</text>
+  <text x="60" y="218" font-family="Arial, sans-serif" font-size="21" fill="#c2d2c5">Coffee craft. Café life. One good cup at a time.</text>
+  <g font-family="Arial, sans-serif" font-size="12" letter-spacing="2" fill="#f0e4c7">
+    <rect x="59" y="260" width="136" height="36" rx="18" fill="#496450"/>
+    <text x="79" y="283">LEARN &amp; BREW</text>
+    <rect x="207" y="260" width="146" height="36" rx="18" fill="#496450"/>
+    <text x="226" y="283">RUN THE CAFÉ</text>
+    <rect x="365" y="260" width="167" height="36" rx="18" fill="#496450"/>
+    <text x="385" y="283">MAKE IT YOURS</text>
+  </g>
+  <text x="60" y="342" font-family="Arial, sans-serif" font-size="12" letter-spacing="3" fill="#92aaa0">PLAYABLE WEBGL GAME · MADE FOR QUIET EVENINGS</text>
+  <g transform="translate(840 50)">
+    <circle cx="209" cy="31" r="25" fill="#e8d398"/>
+    <circle cx="220" cy="23" r="24" fill="#28443b"/>
+    <ellipse cx="104" cy="265" rx="150" ry="22" fill="#101f23" opacity=".35"/>
+    <path d="M-12 249h291" stroke="#8a9273" stroke-width="2"/>
+    <path d="M29 83c-19-23 28-30 11-57M79 81c-17-18 21-26 10-45M128 87c-18-22 23-31 15-48" fill="none" stroke="#d7e4d5" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>
+    <path d="M158 125h18c47 0 47 67 0 67h-14" fill="none" stroke="#ddcea8" stroke-width="17"/>
+    <ellipse cx="93" cy="235" rx="113" ry="15" fill="#a59f7b"/>
+    <ellipse cx="93" cy="230" rx="108" ry="13" fill="#eee2c4"/>
+    <path d="M7 111h163l-10 82c-5 44-139 44-144 0z" fill="url(#cup)"/>
+    <ellipse cx="89" cy="111" rx="82" ry="23" fill="#f3e5c3"/>
+    <ellipse cx="89" cy="110" rx="70" ry="16" fill="#795032"/>
+    <path d="M88 118c-34-12-22-29-4-17 18-17 39 2 4 17" fill="#f4deb5"/>
+    <path d="M218 233l-6-40h53l-6 40z" fill="#c38b68"/>
+    <path d="M238 193v-59" stroke="#91a778" stroke-width="3"/>
+    <path d="M238 175c-40-4-33-28-10-18l10 12M239 156c35-4 38-28 15-20l-15 14M238 139c-25-19-10-37 0-23 13-22 30-7 0 23" fill="#91a778"/>
+  </g>
+</svg>

@@ -1,0 +1,41 @@
+name: Game checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Test and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Test game rules
+        run: npm test
+      - name: Typecheck and build game
+        run: npm run build
+      - name: Save playable build
+        uses: actions/upload-artifact@v7
+        with:
+          name: after-hours-cafe-webgl
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14

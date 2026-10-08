@@ -3,3 +3,10 @@ dist/
 *.tsbuildinfo
 .DS_Store
 .sites-runtime/
+.env
+.env.*
+!.env.example
+*.log
+.vscode/
+.idea/
+coverage/

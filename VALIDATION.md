@@ -12,6 +12,13 @@ Validated in Chrome on Windows, 8 October 2026.
 - The final readability pass gave desk buttons a clear contrast and kept the brewing action pinned inside a scrollable panel. The café desk and brewing panels, including their main actions, were verified at 1366×768, 1920×1080, 2560×1440 and 390×844. Desktop remains the primary target.
 - Title, café, phone, brewing, management and closing screenshots are included. Later-shift screenshots use representative test fixtures; no cheat UI is included in the game.
 
+## Repository setup checks
+
+- Clean `npm ci` installation completed on Node.js 22.14.0. The refreshed lockfile and Vitest 5.0.3 report zero known dependency vulnerabilities with npm audit on 8 October 2026.
+- All 20 tests passed after the test-tool upgrade. Strict TypeScript compilation and the production build passed again.
+- README image paths were checked; the illustrated SVG banner was rendered in Chrome and visually reviewed.
+- GitHub Actions uses Node.js 22, the committed lockfile, the same tests, and the production build. It retains a downloadable compiled-game artifact for 14 days.
+
 ## Performance and limits
 
 Static sun shadows are cached. Render resolution adapts toward a 60 FPS frame budget, while CSS interface text remains at native display resolution. Light mode lowers rain density and disables sun shadows. The available test GPU is an NVIDIA GeForce GT 430; results on this older device are not a universal performance guarantee.
