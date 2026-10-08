@@ -1,0 +1,411 @@
+@media (min-width: 1800px) {
+  :root {
+    font-size: 18px;
+  }
+  .title-content {
+    width: 380px;
+  }
+  .title-actions {
+    width: 265px;
+  }
+  .brew-panel {
+    width: 350px;
+    padding: 29px;
+  }
+  .phone {
+    width: 400px;
+    height: min(850px, calc(100svh - 155px));
+  }
+  .orders {
+    width: 230px;
+  }
+  .hud-header {
+    left: 47px;
+    right: 43px;
+    top: 35px;
+  }
+  .hud-footer {
+    left: 47px;
+    right: 43px;
+    bottom: 32px;
+  }
+  .notifications {
+    left: 47px;
+    top: 120px;
+    width: 320px;
+  }
+}
+@media (max-height: 780px) {
+  .title-content h1 {
+    font-size: 4rem;
+    margin: 15px 0 19px;
+  }
+  .title-content > p {
+    font-size: 0.95rem;
+  }
+  .title-actions {
+    margin-top: 23px;
+  }
+  .title-note {
+    margin-top: 18px;
+  }
+  .title-rule {
+    margin-bottom: 16px;
+  }
+  .brew-panel {
+    padding: 20px;
+    width: 290px;
+  }
+  .recipe-tabs {
+    margin: 16px 0;
+  }
+  .brew-steps {
+    margin-top: 19px;
+  }
+  .brew-instruction {
+    margin-top: 20px;
+    min-height: 62px;
+  }
+  .waiting-for {
+    margin-top: 16px;
+    padding-top: 14px;
+  }
+  .workstation-caption h2 {
+    font-size: 1.8rem;
+  }
+  .summary-panel {
+    padding: 15px 25px;
+  }
+  .summary-moon {
+    margin-bottom: 17px;
+    width: 47px;
+    height: 47px;
+  }
+  .summary-panel h2 {
+    font-size: 2.5rem;
+    margin: 17px 0;
+  }
+  .summary-revenue {
+    padding: 20px 0;
+    gap: 9px;
+  }
+  .summary-grid {
+    margin: 20px 0;
+  }
+  .summary-grid > div {
+    gap: 9px;
+  }
+}
+@media (max-width: 1050px) {
+  .title-content {
+    left: 5vw;
+    width: 260px;
+  }
+  .title-content h1 {
+    font-size: 3.8rem;
+  }
+  .title-top {
+    left: 5vw;
+    right: 5vw;
+  }
+  .title-top > span:last-child {
+    font-size: 0.65rem;
+  }
+  .hud-header {
+    left: 22px;
+    right: 20px;
+    top: 20px;
+  }
+  .cafe-brand b {
+    font-size: 1.06rem;
+  }
+  .hud-stats {
+    gap: 15px;
+  }
+  .hud-money {
+    padding-left: 14px;
+  }
+  .orders {
+    right: 20px;
+    width: 180px;
+  }
+  .hud-footer {
+    left: 22px;
+    right: 20px;
+  }
+  .control-hints {
+    gap: 13px;
+  }
+  .ambience-toggle > span {
+    display: none;
+  }
+  .journey-hint {
+    left: 23px;
+    max-width: 220px;
+  }
+  .notifications {
+    left: 22px;
+    width: 260px;
+  }
+  .brew-panel {
+    right: 3vw;
+    width: 270px;
+    padding: 20px;
+  }
+  .workstation-caption {
+    left: 4vw;
+  }
+  .phone {
+    right: 22px;
+    width: 345px;
+  }
+  .footer-actions {
+    gap: 8px;
+  }
+}
+@media (max-width: 700px) {
+  .game-shell {
+    min-height: 500px;
+  }
+  .title-screen {
+    padding: 25px;
+  }
+  .title-content {
+    left: 30px;
+    top: 48%;
+    width: 245px;
+  }
+  .title-top {
+    left: 25px;
+    right: 25px;
+    top: 25px;
+  }
+  .title-top > span:last-child {
+    display: none;
+  }
+  .title-bottom {
+    left: 25px;
+    right: 25px;
+    bottom: 20px;
+  }
+  .title-bottom > span:last-child {
+    display: none;
+  }
+  .title-content h1 {
+    font-size: 3.7rem;
+  }
+  .title .scene-vignette {
+    background:
+      linear-gradient(90deg, #15272bcc, transparent),
+      linear-gradient(0deg, #15272b77, transparent);
+  }
+  .hud-header {
+    left: 17px;
+    right: 15px;
+    top: 17px;
+  }
+  .cafe-brand > span {
+    width: 31px;
+    height: 31px;
+  }
+  .cafe-brand > span svg {
+    width: 19px;
+  }
+  .cafe-brand b {
+    font-size: 0.88rem;
+  }
+  .cafe-brand small {
+    font-size: 0.5rem;
+  }
+  .hud-time > b {
+    font-size: 0.85rem;
+  }
+  .hud-time > span {
+    font-size: 0.5rem;
+  }
+  .hud-time > svg {
+    width: 14px;
+  }
+  .hud-stats {
+    gap: 10px;
+  }
+  .hud-money {
+    padding-left: 10px;
+  }
+  .hud-money > b {
+    font-size: 0.94rem;
+  }
+  .hud-money > span {
+    font-size: 0.45rem;
+  }
+  .hud-stats > .icon-button {
+    width: 25px;
+  }
+  .orders {
+    top: 85px;
+    right: 15px;
+    width: 153px;
+  }
+  .order-card {
+    padding: 9px;
+    gap: 7px;
+  }
+  .order-card .avatar {
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+  .order-card > div > b {
+    font-size: 0.73rem;
+  }
+  .orders > .eyebrow {
+    font-size: 0.43rem;
+  }
+  .control-hints {
+    display: none;
+  }
+  .hud-footer {
+    left: 15px;
+    right: 15px;
+    bottom: 17px;
+    justify-content: flex-end;
+  }
+  .journey-hint {
+    left: 17px;
+    bottom: 115px;
+    width: 180px;
+  }
+  .journey-hint p {
+    font-size: 0.63rem;
+  }
+  .journey-hint .eyebrow {
+    font-size: 0.59rem;
+  }
+  .notifications {
+    left: 17px;
+    top: 85px;
+    width: 190px;
+  }
+  .notification {
+    padding: 10px;
+    gap: 6px;
+  }
+  .notification b {
+    font-size: 0.65rem;
+  }
+  .notification p {
+    font-size: 0.57rem;
+  }
+  .notification-icon {
+    width: 23px;
+    height: 23px;
+  }
+  .phone {
+    right: 15px;
+    bottom: 58px;
+    width: min(345px, calc(100vw - 30px));
+    height: calc(100svh - 138px);
+  }
+  .brew-panel {
+    width: 240px;
+    padding: 17px;
+    right: 15px;
+    top: 52%;
+  }
+  .brew-panel > h3 {
+    font-size: 1.7rem;
+  }
+  .workstation-caption {
+    bottom: 33px;
+    left: 20px;
+  }
+  .workstation-caption h2 {
+    font-size: 1.35rem;
+  }
+  .workstation-caption p {
+    display: none;
+  }
+  .workstation-caption > .eyebrow {
+    font-size: 0.45rem;
+  }
+  .back-control {
+    left: 20px;
+    top: 76px;
+    font-size: 0.62rem;
+  }
+  .at-bar .hud-header .cafe-brand {
+    display: none;
+  }
+  .at-bar .hud-header {
+    justify-content: flex-end;
+  }
+  .tray-card {
+    bottom: 100px;
+    min-width: 180px;
+    left: auto;
+    right: 17px;
+    transform: none;
+  }
+  .tray-card b {
+    font-size: 0.7rem;
+  }
+  .tray-card em {
+    display: none;
+  }
+  .touch-controls {
+    position: absolute;
+    bottom: 17px;
+    left: 17px;
+    display: flex;
+    gap: 4px;
+    pointer-events: auto;
+  }
+  .touch-controls button {
+    background: #ece6d312;
+    border: 1px solid #dccfb02a;
+    border-radius: 5px;
+    width: 29px;
+    height: 32px;
+    font-size: 0.75rem;
+    touch-action: none;
+  }
+  .touch-controls button:last-child {
+    background: #c8aa7933;
+  }
+  .slider-row {
+    grid-template-columns: 110px 1fr 30px;
+    gap: 7px;
+    font-size: 0.65rem;
+  }
+  .settings-panel,
+  .help-panel {
+    padding: 26px;
+  }
+  .settings-panel h2 {
+    font-size: 1.5rem;
+  }
+  .summary-panel h2 {
+    font-size: 2.1rem;
+  }
+  .summary-grid span {
+    font-size: 0.49rem;
+  }
+  .summary-panel > p {
+    font-size: 0.65rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  button,
+  .phone,
+  .notification,
+  .progress > i {
+    transition-duration: 0.01ms;
+  }
+  .world-prompt,
+  .notification,
+  .order-card,
+  .summary-screen,
+  .tray-card {
+    animation-duration: 0.01ms;
+  }
+}

@@ -1,0 +1,298 @@
+.workstation-ui {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent 45%, #152a2938 100%);
+}
+.workstation-ui button {
+  pointer-events: auto;
+}
+.at-bar .hud-header .cafe-brand {
+  visibility: hidden;
+}
+.back-control {
+  position: absolute;
+  left: 37px;
+  top: 33px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: transparent;
+  font-size: 0.73rem;
+  color: #d3dfcf;
+}
+.back-control kbd {
+  font-size: 0.57rem;
+}
+.workstation-caption {
+  position: absolute;
+  left: 5vw;
+  bottom: 93px;
+  text-shadow: 0 2px 10px #1b2d2b88;
+}
+.workstation-caption > .eyebrow {
+  color: #dabd8e;
+  font-size: 0.62rem;
+}
+.workstation-caption h2 {
+  font-family: Georgia, serif;
+  font-size: 2.15rem;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  color: #efe3c9;
+  margin-top: 14px;
+}
+.workstation-caption p {
+  font-size: 0.79rem;
+  color: #c1ccba;
+  margin-top: 10px;
+}
+.brew-panel {
+  position: absolute;
+  right: 5vw;
+  top: 50%;
+  transform: translateY(-48%);
+  width: 310px;
+  background: #ede5d5f5;
+  color: #52634c;
+  border: 1px solid #f5ecd9;
+  border-radius: 14px;
+  box-shadow: 0 18px 55px #16262355;
+  padding: 25px;
+  pointer-events: auto;
+  backdrop-filter: blur(12px);
+}
+.brew-panel-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #879270;
+}
+.brew-panel-heading .eyebrow {
+  font-size: 0.57rem;
+  color: #8d967c;
+  letter-spacing: 0.12em;
+}
+.recipe-tabs {
+  display: flex;
+  gap: 5px;
+  margin: 22px 0 21px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid #d3d6c0;
+}
+.recipe-tabs button {
+  flex: 1;
+  font-size: 0.62rem;
+  padding: 9px 3px;
+  background: transparent;
+  border: 1px solid #d5d9c5;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.recipe-tabs button.active {
+  color: #efedda;
+  background: #5b7353;
+  border-color: #5b7353;
+  opacity: 1;
+}
+.recipe-tabs small {
+  font-size: 0.43rem;
+}
+.brew-panel > h3 {
+  font-family: Georgia, serif;
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  color: #4c6445;
+}
+.recipe-note {
+  font-size: 0.67rem;
+  color: #8e967b;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+.brew-steps {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+  position: relative;
+}
+.brew-steps:before {
+  content: "";
+  height: 1px;
+  background: #d2d8be;
+  position: absolute;
+  top: 12px;
+  left: 10px;
+  right: 10px;
+}
+.brew-steps > div {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 7px;
+  position: relative;
+  color: #a3ac91;
+}
+.brew-steps span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d2d8bd;
+  background: #ece6d7;
+  border-radius: 50%;
+  height: 24px;
+  width: 24px;
+  font-size: 0.58rem;
+}
+.brew-steps small {
+  font-size: 0.53rem;
+}
+.brew-steps .done span {
+  background: #dbe3cc;
+  color: #6c8758;
+  border-color: #dbe3cc;
+}
+.brew-steps .current span {
+  background: #687f55;
+  color: #f4ecd7;
+  border-color: #687f55;
+  box-shadow: 0 0 0 3px #acba891f;
+}
+.brew-steps .current small {
+  color: #748b5c;
+}
+.brew-instruction {
+  margin-top: 27px;
+  min-height: 70px;
+}
+.brew-instruction h4 {
+  font-family: Georgia, serif;
+  font-size: 1.14rem;
+  font-weight: 400;
+  color: #5f7751;
+}
+.brew-instruction p {
+  font-size: 0.67rem;
+  line-height: 1.55;
+  color: #9a9f84;
+  margin-top: 9px;
+}
+.brew-action {
+  width: 100%;
+  font-size: 0.72rem;
+  color: #efe9d2;
+  background: #5a7350;
+  box-shadow: none;
+  margin-top: 18px;
+  min-height: 43px;
+  padding: 11px;
+}
+.brew-action:hover {
+  background: #68815a;
+}
+.brew-action kbd {
+  font-size: 0.5rem;
+  margin-left: auto;
+  color: #dbe4cd;
+}
+.brew-action .lucide {
+  width: 17px;
+}
+.hold-button {
+  touch-action: none;
+  user-select: none;
+}
+.hold-button.held {
+  background: #859360;
+}
+.extraction-meter {
+  margin: 15px 0 8px;
+}
+.extraction-meter .progress {
+  height: 5px;
+  background: #d9d4bb;
+}
+.extraction-meter .progress > i {
+  background: #b59761;
+}
+.extraction-meter > span {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.55rem;
+  color: #91997f;
+  margin-top: 8px;
+}
+.extraction-meter b {
+  font-weight: 400;
+}
+.milk-meter .progress {
+  height: 9px;
+  overflow: visible;
+}
+.milk-meter .progress > i {
+  height: 100%;
+  background: #bfb28a;
+  max-width: 100%;
+}
+.sweet-zone {
+  position: absolute;
+  left: 64%;
+  width: 26%;
+  height: 100%;
+  background: #7f9c6299;
+  border-radius: 2px;
+  z-index: 1;
+}
+.drink-complete {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #819262;
+  font-size: 0.64rem;
+  margin-top: 12px;
+}
+.drink-complete > span {
+  margin-left: auto;
+  color: #96a17a;
+}
+.waiting-for {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  padding-top: 18px;
+  margin-top: 21px;
+  border-top: 1px solid #d7d9c4;
+}
+.waiting-for .avatar {
+  width: 27px;
+  height: 27px;
+  font-size: 0.8rem;
+}
+.waiting-for small {
+  font-size: 0.52rem;
+  color: #9a9e84;
+  display: block;
+}
+.waiting-for b {
+  font-size: 0.66rem;
+  color: #7a8967;
+  display: block;
+  margin-top: 4px;
+  font-weight: 500;
+}
+.restart-brew {
+  font-size: 0.53rem;
+  display: block;
+  margin: 13px auto -9px;
+  color: #a4aa90;
+}
+.at-bar .notifications {
+  top: auto;
+  bottom: 25px;
+}

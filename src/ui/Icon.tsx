@@ -1,0 +1,80 @@
+import {
+  Coffee,
+  CloudRain,
+  Moon,
+  Settings2,
+  Smartphone,
+  Volume2,
+  VolumeX,
+  X,
+  Leaf,
+  LampFloor,
+  BookOpen,
+  Frame,
+  Armchair,
+  Bot,
+  Banknote,
+  Heart,
+  Camera,
+  ShoppingBag,
+  Store,
+  Check,
+  Sparkles,
+  ArrowLeft,
+  Maximize2,
+  HelpCircle,
+  ChevronRight,
+  Music2,
+  Pause,
+  Play,
+  RotateCcw,
+  Users,
+  Star,
+} from "lucide-react";
+const icons = {
+  coffee: Coffee,
+  rain: CloudRain,
+  moon: Moon,
+  settings: Settings2,
+  phone: Smartphone,
+  sound: Volume2,
+  mute: VolumeX,
+  close: X,
+  plant: Leaf,
+  lamp: LampFloor,
+  book: BookOpen,
+  art: Frame,
+  table: Coffee,
+  sofa: Armchair,
+  robot: Bot,
+  bank: Banknote,
+  heart: Heart,
+  camera: Camera,
+  shop: ShoppingBag,
+  store: Store,
+  check: Check,
+  sparkle: Sparkles,
+  back: ArrowLeft,
+  fullscreen: Maximize2,
+  help: HelpCircle,
+  next: ChevronRight,
+  music: Music2,
+  pause: Pause,
+  play: Play,
+  reset: RotateCcw,
+  users: Users,
+  star: Star,
+};
+export function Icon({
+  name,
+  size = 18,
+  ...props
+}: {
+  name: keyof typeof icons;
+  size?: number;
+  className?: string;
+}) {
+  const Component = icons[name];
+  return <Component size={size} strokeWidth={1.6} {...props} />;
+}
+export type IconName = keyof typeof icons;

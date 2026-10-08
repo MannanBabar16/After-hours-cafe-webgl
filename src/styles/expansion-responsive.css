@@ -1,0 +1,195 @@
+@media (min-width: 1800px) {
+  .craft-panel {
+    width: 410px;
+    padding: 26px;
+  }
+  .craft-panel .brew-instruction p {
+    font-size: 14px;
+  }
+}
+@media (max-height: 770px) {
+  .craft-panel {
+    top: 54%;
+    max-height: calc(100dvh - 116px);
+    padding: 18px 22px;
+  }
+  .craft-panel .recipe-tabs {
+    margin: 12px 0;
+    padding-bottom: 10px;
+  }
+  .craft-panel .brew-steps {
+    margin-top: 14px;
+  }
+  .craft-panel .brew-instruction {
+    margin-top: 13px;
+  }
+  .craft-panel .recipe-note {
+    line-height: 1.4;
+  }
+  .cafe-desk {
+    height: 92dvh;
+  }
+}
+@media (max-width: 900px) {
+  .cafe-desk {
+    grid-template-columns: 165px 1fr;
+  }
+  .desk-sidebar {
+    padding: 25px 13px;
+  }
+  .desk-header {
+    padding: 20px;
+  }
+  .desk-content {
+    padding: 20px;
+  }
+  .desk-logo h2 {
+    font-size: 22px;
+  }
+  .business-metrics b {
+    font-size: 24px;
+  }
+  .business-strip {
+    left: 22px;
+    bottom: 147px;
+  }
+  .craft-panel {
+    right: 4vw;
+  }
+  .workstation-caption h2 {
+    font-size: 27px;
+  }
+}
+@media (max-width: 640px) {
+  .management-backdrop {
+    padding: 10px;
+  }
+  .cafe-desk {
+    width: 100%;
+    height: 96dvh;
+    grid-template-columns: 1fr;
+  }
+  .desk-sidebar {
+    padding: 10px;
+    display: block;
+    border-right: 0;
+    border-bottom: 1px solid #c9d2bb;
+  }
+  .desk-logo,
+  .desk-balance {
+    display: none;
+  }
+  .desk-sidebar nav {
+    display: flex;
+    margin: 0;
+    gap: 3px;
+  }
+  .desk-sidebar nav button {
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px 2px;
+    font-size: 9px;
+  }
+  .desk-main {
+    min-height: 0;
+  }
+  .desk-header {
+    padding: 15px 18px;
+  }
+  .desk-header h2 {
+    font-size: 26px;
+  }
+  .desk-content {
+    padding: 18px;
+  }
+  .desk-footer {
+    padding: 12px;
+  }
+  .desk-footer > span {
+    font-size: 8px;
+  }
+  .business-metrics {
+    gap: 6px;
+  }
+  .business-metrics > div {
+    padding: 12px 7px;
+  }
+  .business-metrics b {
+    font-size: 23px;
+  }
+  .business-metrics small {
+    font-size: 8px;
+  }
+  .business-metrics span {
+    font-size: 9px;
+  }
+  .supply-cards {
+    gap: 7px;
+  }
+  .supply-cards article {
+    padding: 13px 8px;
+  }
+  .supply-cards h3 {
+    font-size: 16px;
+  }
+  .supply-cards button {
+    font-size: 10px;
+  }
+  .desk-intro {
+    font-size: 12px;
+  }
+  .barista-banner {
+    gap: 10px;
+  }
+  .barista-banner h3 {
+    font-size: 20px;
+  }
+  .barista-banner > svg {
+    display: none;
+  }
+  .business-strip {
+    bottom: 186px;
+    left: 15px;
+    gap: 7px;
+    font-size: 10px;
+    padding: 8px;
+  }
+  .business-strip > b {
+    display: none;
+  }
+  .craft-panel {
+    right: 14px;
+    top: 53%;
+    width: min(360px, calc(100vw - 28px));
+    max-height: calc(100dvh - 100px);
+  }
+  .craft-ui .workstation-caption {
+    display: none;
+  }
+  .craft-ui .back-control {
+    left: 18px;
+    top: 22px;
+  }
+  .at-bar .hud-stats {
+    display: none;
+  }
+  .pricing-options {
+    gap: 5px;
+  }
+  .pricing-options button {
+    padding: 12px 6px;
+  }
+  .pricing-options b {
+    font-size: 11px;
+  }
+  .pricing-options small {
+    font-size: 8px;
+  }
+  .pastry-toggle b {
+    font-size: 18px;
+  }
+  .desk-actions {
+    flex-direction: column;
+  }
+}
