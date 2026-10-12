@@ -1,3 +1,5 @@
+import { layout, shelfSpot, robotRoute } from "../data/layout";
+import { walkable } from "../game/navigation";
 import type { GameState } from "./game";
 import { customers, upgrades } from "../data/content";
 import type { RecipeId } from "../data/content";
@@ -203,8 +205,8 @@ export function mergeBusinessSave(
   s.cameraMode = p.cameraMode === "first" ? "first" : "isometric";
   const pos = record(p.player);
   s.player = {
-    x: n(pos.x, -0.6, 5.6, -8.5),
-    z: n(pos.z, -1.2, 6.5, -2.1),
+    x: n(pos.x, layout.spawn.x, 5.51, -5.53),
+    z: n(pos.z, layout.spawn.z, 6.7, -6.16),
     angle: n(pos.angle, Math.PI, Math.PI * 100, -Math.PI * 100),
   };
   s.inProgress = p.inProgress === true;
@@ -243,8 +245,8 @@ export function mergeBusinessSave(
           id: ++o.serial,
           supply: id,
           quantity: extra,
-          x: -8.15,
-          z: -0.75 + o.boxes.length * 0.9,
+          x: shelfSpot(o.boxes.length)[0],
+          z: shelfSpot(o.boxes.length)[1],
           location: "storage",
           slot: o.boxes.length,
         });
@@ -297,8 +299,8 @@ export function mergeBusinessSave(
         id: whole(d.id),
         supply: d.supply as SupplyId,
         quantity: whole(d.quantity, 0, 10000),
-        x: n(d.x, -8.15, 5.7, -8.6),
-        z: n(d.z, 0, 8, -2.5),
+        x: n(d.x, 2.4, 5.7, -5.53),
+        z: n(d.z, 0, 6.7, -6.2),
         location: ["delivery", "floor", "storage", "carried"].includes(
           String(d.location),
         )
@@ -438,7 +440,7 @@ export function mergeBusinessSave(
       .slice(0, caps(o.levels, "robot")),
     route: arr(r.route)
       .filter((point) => Array.isArray(point) && point.length === 2)
-      .map((point) => [n(point[0], 0, 5.5, -5.5), n(point[1], 0, 4.5, -2)]),
+      .map((point) => [n(point[0], 0, 5.5, -5.5), n(point[1], 0, 4.5, -6.2)]),
   };
   if (
     !o.orders.some((order) => order.id === o.robot.orderId) &&
@@ -510,8 +512,8 @@ export function mergeBusinessSave(
       return {
         id: whole(d.id),
         carry: carryValue(d.carry, o),
-        x: n(d.x, 0, 5.8, -8.5),
-        z: n(d.z, 1, 6.5, -2),
+        x: n(d.x, 0, 5.5, -5.5),
+        z: n(d.z, 1, 6.7, -6.2),
       };
     })
     .filter(
@@ -571,5 +573,27 @@ export function mergeBusinessSave(
         payment: n(d.payment),
       };
     });
+  const changedLayout = raw.layoutVersion !== layout.version;
+  if (changedLayout || !walkable(s.player.x, s.player.z))
+    s.player = { ...layout.spawn };
+  o.layoutVersion = layout.version;
+  o.boxes = o.boxes.map((box) =>
+    box.location === "storage"
+      ? { ...box, x: shelfSpot(box.slot)[0], z: shelfSpot(box.slot)[1] }
+      : box.location === "floor" && !walkable(box.x, box.z)
+        ? { ...box, x: 3.7, z: 3.6 }
+        : box,
+  );
+  o.loose = o.loose.map((loose, i) =>
+    walkable(loose.x, loose.z)
+      ? loose
+      : { ...loose, x: -2.5 + (i % 6) * 0.6, z: 5.6 + Math.floor(i / 6) * 0.3 },
+  );
+  if (changedLayout && o.robot.stage !== "idle") {
+    const visitor = s.visitors.find((v) => v.uid === o.robot.orderId);
+    o.robot.route = robotRoute(visitor?.seat ?? 0);
+    if (o.robot.stage === "returning") o.robot.route.reverse();
+    o.robot.elapsed = 0;
+  }
   return s;
 }

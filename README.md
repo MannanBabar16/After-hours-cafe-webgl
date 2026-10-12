@@ -2,15 +2,25 @@
 
 <p align="center"><a href="https://after-hours-cafe.upbeat-badge-4829.chatgpt.site"><b>PLAY THE PUBLIC GAME</b></a> · <a href="GAME_DESIGN.md">Design notebook</a> · <a href="docs/ARCHITECTURE.md">Architecture</a> · <a href="VALIDATION.md">Validation</a></p>
 
-# After Hours Café · 2.0
+# After Hours Café · 3.0
 
 **A little café. A real till. One good evening at a time.**
 
-A playable café simulator about keeping coffee flowing, baking warm cookies, restocking the bar, and investing your earnings. A rainy Korean-inspired diorama becomes a first-person café with one key. Both views share the same player, real items, customers, machines, and money.
+A living miniature café about keeping coffee flowing, baking warm cookies, restocking the bar, and investing your earnings. Warm oak, rounded sage woodwork, cream tiles, arched windows, soft toy characters, and a kitchen-side drive-through give the business its own place. A rainy Korean-inspired diorama becomes a first-person café with one key. Both views share the same player, real items, customers, machines, and money.
 
 [Play online](https://after-hours-cafe.upbeat-badge-4829.chatgpt.site) — public access, no game account required. Saves stay in your browser.
 
 <img src="cafe-preview.png" alt="The cozy café, stockroom, coffee counter, and drive-through lane" width="100%" />
+
+## A miniature world that works
+
+Seating and the entrance are on the left. Coffee, cookies, handoff, and the drive-through window are on the right. The stockroom sits directly behind the kitchen. Cars approach along the outside wall, stop beside the sliding window, and leave through the exterior lane.
+
+Customers take their orders back to the tables. Make their coffee, serve them there, or let Bomi carry the products along the clear aisles. Scroll over the café for a small diorama zoom; press V for the complete interior, including walls and ceiling.
+
+<table><tr><td width="50%"><img src="drive-through-preview.png" alt="The rounded car waiting outside the shaded kitchen pickup window" /><b>A roadside drive-through</b></td><td><img src="stockroom-preview.png" alt="Printed supply boxes on the kitchen stockroom shelves" /><b>Storage attached to the working kitchen</b></td></tr></table>
+
+[Art direction and layout notes](docs/ART_DIRECTION.md) explain the redesign, central coordinates, save migration, and visual decisions.
 
 ## Stock → brew → bake → serve → grow
 
@@ -59,6 +69,7 @@ Serve `dist/` over HTTP; opening `index.html` through `file://` does not load th
 | E | Interact with the nearby prompt |
 | V | Diorama ↔ first person |
 | Mouse / click café | First-person look / capture mouse |
+| Mouse wheel over café | Small diorama zoom |
 | F | Business phone |
 | Tab | Equipment app |
 | R | Café Manager app |
@@ -76,9 +87,9 @@ npm run typecheck
 npm run build
 ```
 
-42 meaningful rule and save tests cover conservation of stock, partial orders, duplicate payment, deliveries, baking, robots, cars, expenses, camera state, closing, and migration. [Validation](VALIDATION.md) describes the browser playthroughs and their fixtures. GitHub Actions is configured for Node 22, locked installation, tests, and a downloadable production artifact; account-level runner availability can affect cloud runs independently of the game.
+48 meaningful rule, layout, and save tests cover conservation of stock, partial orders, duplicate payment, deliveries, baking, robots, cars, expenses, camera state, closing, migration, station reachability, and clear serving routes. [Validation](VALIDATION.md) describes the browser playthroughs and their fixtures. GitHub Actions is configured for Node 22, locked installation, tests, and a downloadable production artifact; account-level runner availability can affect cloud runs independently of the game.
 
-Recipes, prices, pack sizes, equipment capacity, and timings are centralized in [`src/data/operations.ts`](src/data/operations.ts). Personalize the café through the phone; change the visual palette in `src/styles/operations.css` and world modules. See [Contributing](CONTRIBUTING.md).
+Recipes, prices, pack sizes, equipment capacity, and timings are centralized in [`src/data/operations.ts`](src/data/operations.ts). Room coordinates live in [`src/data/layout.ts`](src/data/layout.ts). Personalize the café through the phone; edit the world palette in `src/game/art.tsx` and matching UI in `src/styles/miniature.css`. See [Contributing](CONTRIBUTING.md).
 
 **Scope:** this is a browser café-management prototype with a stylized procedural world. Its automatic machine teaches recipes and workflow; it does not simulate manual espresso extraction, commercial food safety, or real currency. No multiplayer, cloud saves, Steam integration, or external services are required. Touch controls and narrow phone layouts are available; desktop keyboard/mouse is the primary experience.
 

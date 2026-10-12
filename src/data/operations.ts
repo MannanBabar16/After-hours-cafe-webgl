@@ -1,3 +1,4 @@
+import { interactionPoints } from './layout';
 import type { RecipeId } from "./content";
 export type SupplyId = "beans" | "milk" | "cups" | "dough" | "syrup";
 export type ProductId = RecipeId | "cookie";
@@ -249,25 +250,7 @@ export const equipment: Record<
     detail: "Extra shelf slots. Overflow deliveries stay outside.",
   },
 };
-export const stationPositions = {
-  cups: [-3.45, 1.5, -3.05],
-  machine: [-1.8, 1.7, -3.05],
-  milk: [-0.65, 1.6, -3.05],
-  hopper: [-2.1, 2.5, -3.05],
-  syrup: [0.15, 1.6, -3.05],
-  oven: [0.7, 1.5, -3.05],
-  dough: [-7.5, 1.1, -1.7],
-  display: [-4.55, 1.5, -3.05],
-  storage: [-7.7, 1.5, 0.1],
-  robot: [0.55, 0.6, -0.9],
-  handoff: [1.45, 1.4, -3.05],
-  trash: [-5.2, 0.65, 2.05],
-  door: [4.6, 1.5, 4.5],
-  window: [5.85, 1.55, -0.1],
-  tray: [1.6, 1.5, -2.7],
-  grounds: [-1.1, 1.6, -3.05],
-  cat: [4.7, 0.6, 1.5],
-} as const;
+export const stationPositions = interactionPoints;
 export type StationId = keyof typeof stationPositions;
 export const caps = (levels: Record<EquipmentId, number>, id: EquipmentId) =>
   equipment[id].values[levels[id]];

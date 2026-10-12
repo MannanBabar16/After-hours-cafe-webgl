@@ -1,6 +1,7 @@
+import { layout, shelfSpot, robotRoute } from "../data/layout";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { upgrades, customerById, seats } from "../data/content";
+import { upgrades, customerById } from "../data/content";
 import type { RecipeId, Style } from "../data/content";
 import {
   products,
@@ -178,7 +179,7 @@ const freshSave = () => ({
   followerStart: 24,
   ops: freshOperations(),
   carry: null as Carry | null,
-  player: { x: -0.6, z: -1.2, angle: Math.PI },
+  player: { ...layout.spawn },
   cameraMode: "isometric" as const,
   elapsed: 0,
   revenue: 0,
@@ -805,16 +806,12 @@ export const useGame = create<GameState>()(
                 : null;
         else s.ops.handoff = rest;
         const visitor = s.visitors.find((v) => v.uid === order.visitorUid);
-        const seat = seats[visitor?.seat ?? 0];
-        const target: [number, number] = order.paid
-          ? [seat[0], seat[1] + 0.85]
-          : [1.7 + (order.id % 3) * 0.38, -1.45 + (order.id % 3) * 0.3];
         s.ops.robot = {
           stage: "outbound",
           elapsed: 0,
           orderId: order.id,
           items: selected,
-          route: [[0.55, -0.9], [1.7, -0.9], target],
+          route: robotRoute(visitor?.seat ?? 0),
         };
         audio.play("robot");
         toast(
@@ -1012,8 +1009,7 @@ export const useGame = create<GameState>()(
             else if (box) {
               box.location = "storage";
               box.slot = slot;
-              box.x = -8.15;
-              box.z = -0.75 + (slot % 4) * 0.9;
+              [box.x, box.z] = shelfSpot(slot);
               s.carry = null;
               audio.play("cup");
             }
@@ -1145,7 +1141,7 @@ export const useGame = create<GameState>()(
     }),
     {
       name: "after-hours-cafe-v1",
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => safeStorage),
       partialize: (s) => ({
         money: s.money,

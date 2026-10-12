@@ -1,9 +1,12 @@
-import { useRef } from "react";
+import { SupplyPrint } from "./SupplyPrint";
+import { layout } from "../data/layout";
+import { SoftBox, Rod } from "./art";
+import { useRef, useMemo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { Box, Ball, Cylinder, Label, material } from "./primitives";
+import { Ball, Cylinder, Label, material } from "./primitives";
 import { useGame } from "../store/game";
-import { caps, products, supplyCatalog } from "../data/operations";
+import { caps, products } from "../data/operations";
 import type { ProductId } from "../data/operations";
 import type { Carry, SupplyBox } from "../store/operationTypes";
 
@@ -16,6 +19,9 @@ export function PaperCup({
   product?: ProductId;
   scale?: number;
 }) {
+  const sleeve = useGame((s) =>
+    s.business.cup === "#f3e5ca" ? "#78917b" : s.business.cup,
+  );
   return (
     <group scale={scale}>
       <mesh position={[0, 0.15, 0]} castShadow>
@@ -38,14 +44,14 @@ export function PaperCup({
       <Cylinder
         position={[0, 0.15, 0]}
         scale={[0.117, 0.105, 0.117]}
-        color="#a39b76"
+        color={sleeve}
       />
       <Label
         position={[0, 0.153, 0.119]}
-        text="AFTER HOURS"
+        text="☽ CAFÉ"
         size={[0.16, 0.044]}
         font={46}
-        background="#a39b76"
+        background={sleeve}
         color="#f9f0dd"
       />
       {fill > 0 && (
@@ -110,35 +116,27 @@ export function BoxVisual({
   box: SupplyBox;
   small?: boolean;
 }) {
-  const p = supplyCatalog[box.supply];
   return (
-    <group scale={small ? 0.65 : 1}>
-      <Box
+    <group scale={small ? 0.9 : 1}>
+      <SoftBox
         position={[0, 0.28, 0]}
-        scale={[0.65, 0.56, 0.48]}
-        color={box.quantity ? p.color : "#a89477"}
+        size={[0.65, 0.56, 0.48]}
+        color={box.quantity ? "#c6a780" : "#a89477"}
       />
-      <Box
+      <SoftBox
         position={[0, 0.565, 0]}
-        scale={[0.08, 0.014, 0.48]}
+        size={[0.08, 0.014, 0.48]}
         color="#e0ccb0"
       />
-      <Box
+      <SoftBox
         position={[0, 0.28, 0.248]}
-        scale={[0.55, 0.36, 0.012]}
+        size={[0.55, 0.36, 0.012]}
         color="#f5ead6"
       />
-      <Label
-        position={[0, 0.31, 0.258]}
-        text={`${p.name.toUpperCase()}\n${box.quantity} ${p.unit.toUpperCase()}`}
-        size={[0.5, 0.27]}
-        font={55}
-        background="#f5ead6"
-        color="#41584b"
-      />
-      <Box
+      <SupplyPrint box={box} />
+      <SoftBox
         position={[0.3, 0.28, 0]}
-        scale={[0.013, 0.33, 0.3]}
+        size={[0.013, 0.33, 0.3]}
         color="#ede0c8"
       />
     </group>
@@ -162,12 +160,16 @@ export function CarryVisual({ carry }: { carry: Carry }) {
     );
   if (carry.kind === "trash")
     return (
-      <Box position={[0, 0.15, 0]} scale={[0.35, 0.3, 0.25]} color="#a79178" />
+      <SoftBox
+        position={[0, 0.15, 0]}
+        size={[0.35, 0.3, 0.25]}
+        color="#a79178"
+      />
     );
   if (carry.kind === "tray")
     return (
       <group>
-        <Box scale={[0.74, 0.035, 0.4]} color="#bca082" />
+        <SoftBox size={[0.74, 0.035, 0.4]} color="#bca082" />
         {carry.items.map((item, i) => (
           <group key={item.id} position={[(i - 1) * 0.23, 0.02, 0]}>
             {item.product === "cookie" ? (
@@ -181,7 +183,7 @@ export function CarryVisual({ carry }: { carry: Carry }) {
     );
   return (
     <group>
-      <Box scale={[0.8, 0.035, 0.5]} color="#7b8580" metal={0.5} />
+      <SoftBox size={[0.8, 0.035, 0.5]} color="#7b8580" metal={0.5} />
       {Array.from({ length: carry.quantity }, (_, i) => (
         <group
           key={i}
@@ -207,8 +209,7 @@ export function AutoMachine() {
     milkLevel = useGame((s) => s.ops.levels.milkTank),
     cups = useGame((s) => s.ops.containers.cups),
     cupLevel = useGame((s) => s.ops.levels.cupDispenser),
-    syrup = useGame((s) => s.ops.containers.syrup),
-    grounds = useGame((s) => s.ops.grounds);
+    syrup = useGame((s) => s.ops.containers.syrup);
   const body = useRef<THREE.Group>(null),
     liquid = useRef<THREE.Mesh>(null),
     stream = useRef<THREE.Mesh>(null),
@@ -258,37 +259,54 @@ export function AutoMachine() {
   });
   const tankH = 0.55 + milkLevel * 0.12,
     hopperH = 0.3 + hopperLevel * 0.1;
+  const milkTube = useMemo(
+    () =>
+      new THREE.TubeGeometry(
+        new THREE.CatmullRomCurve3([
+          new THREE.Vector3(0.93, 0.18 + tankH, -0.1),
+          new THREE.Vector3(0.73, 0.24 + tankH, 0.05),
+          new THREE.Vector3(0.62, 0.57, 0.26),
+          new THREE.Vector3(0.49, 0.5, 0.26),
+        ]),
+        20,
+        0.014,
+        7,
+        false,
+      ),
+    [tankH],
+  );
+  useEffect(() => () => milkTube.dispose(), [milkTube]);
   return (
-    <group position={[-1.8, 1.45, -3.05]}>
+    <group position={layout.machine}>
       <group ref={body}>
-        <Box
+        <SoftBox
           position={[0, 0.49, -0.17]}
-          scale={[1.18, 1.02, 0.68]}
+          size={[1.18, 1.02, 0.68]}
           color={level ? "#637d73" : "#86a69a"}
           rough={0.35}
           metal={0.35}
         />
-        <Box
+        <SoftBox
           position={[0, 0.045, 0.06]}
-          scale={[1.25, 0.09, 0.95]}
+          size={[1.25, 0.09, 0.95]}
           color="#c5c2ad"
           metal={0.75}
           rough={0.27}
         />
-        <Box
+        <SoftBox
           position={[0, 0.5, 0.22]}
-          scale={[0.95, 0.89, 0.025]}
+          size={[0.95, 0.89, 0.025]}
           color="#263e39"
           metal={0.35}
         />
-        <Box
+        <SoftBox
           position={[0, 0.43, 0.25]}
-          scale={[0.61, 0.55, 0.018]}
+          size={[0.61, 0.55, 0.018]}
           color="#152724"
         />
-        <Box
+        <SoftBox
           position={[0, 0.61, 0.41]}
-          scale={[0.3, 0.09, 0.3]}
+          size={[0.3, 0.09, 0.3]}
           color="#cbd1bd"
           metal={0.8}
           rough={0.18}
@@ -302,30 +320,30 @@ export function AutoMachine() {
             metal={0.85}
           />
         ))}
-        <Box
+        <SoftBox
           position={[0, 0.11, 0.4]}
-          scale={[0.76, 0.05, 0.62]}
+          size={[0.76, 0.05, 0.62]}
           color="#929d92"
           metal={0.65}
         />
         {Array.from({ length: 8 }, (_, i) => (
-          <Box
+          <SoftBox
             key={i}
             position={[-0.3 + i * 0.085, 0.14, 0.4]}
-            scale={[0.03, 0.012, 0.53]}
+            size={[0.03, 0.012, 0.53]}
             color="#33443e"
           />
         ))}
         <Label
           text={
             stage === "brewing"
-              ? "BREWING · TAKE YOUR TIME"
+              ? "BREWING"
               : stage === "ready"
-                ? "YOUR COFFEE IS READY"
-                : "AFTER HOURS · BEAN TO CUP"
+                ? "COFFEE IS READY"
+                : "AFTER HOURS"
           }
           position={[0, 0.85, 0.237]}
-          size={[0.88, 0.11]}
+          size={[0.74, 0.13]}
           font={54}
           background="#294a3f"
           color="#d6dfb6"
@@ -340,8 +358,8 @@ export function AutoMachine() {
                 useGame.getState().startBrew(id);
               }}
             >
-              <Box
-                scale={[0.2, 0.07, 0.025]}
+              <SoftBox
+                size={[0.2, 0.07, 0.025]}
                 color={
                   stage === "brewing" &&
                   useGame.getState().ops.machine.recipe === id
@@ -351,7 +369,7 @@ export function AutoMachine() {
                 rough={0.4}
               />
               <Label
-                text={products[id].name.slice(0, 5).toUpperCase()}
+                text={products[id].name.toUpperCase()}
                 position={[0, 0, 0.016]}
                 size={[0.18, 0.045]}
                 font={52}
@@ -363,6 +381,22 @@ export function AutoMachine() {
         )}
       </group>
       <group position={[-0.27, 1, -0.14]}>
+        {Array.from({ length: Math.min(beans, 22) }, (_, i) => (
+          <Ball
+            key={i}
+            position={[
+              Math.cos(i * 2.4) * (0.06 + (i % 3) * 0.035),
+              0.045 +
+                (beans / caps(useGame.getState().ops.levels, "hopper")) *
+                  hopperH *
+                  0.8,
+              Math.sin(i * 2.4) * (0.06 + (i % 3) * 0.035),
+            ]}
+            scale={[0.045, 0.025, 0.029]}
+            color={i % 3 ? "#624936" : "#856046"}
+            rotation={[0, i * 2.4, 0]}
+          />
+        ))}
         <Cylinder
           position={[0, 0.03, 0]}
           scale={[0.24, 0.06, 0.24]}
@@ -405,7 +439,7 @@ export function AutoMachine() {
           color="#364d40"
         />
         <Label
-          text={`${beans}/${caps(useGame.getState().ops.levels, "hopper")} BEANS`}
+          text="BEANS"
           position={[0, hopperH / 2, 0.241]}
           size={[0.4, 0.09]}
           font={52}
@@ -413,23 +447,23 @@ export function AutoMachine() {
         />
       </group>
       <group position={[0.93, 0, -0.1]}>
-        <Box
+        <SoftBox
           position={[0, 0.08, 0]}
-          scale={[0.42, 0.14, 0.44]}
+          size={[0.42, 0.14, 0.44]}
           color="#a2b5a5"
           metal={0.3}
         />
         <mesh position={[0, 0.18 + tankH / 2, 0]}>
-          <boxGeometry args={[0.38, tankH, 0.38]} />
+          <cylinderGeometry args={[0.19, 0.19, tankH, 20]} />
           <meshStandardMaterial
             color="#bdd8cc"
             transparent
-            opacity={0.23}
-            roughness={0.15}
+            opacity={0.21}
+            roughness={0.16}
             depthWrite={false}
           />
         </mesh>
-        <Box
+        <Cylinder
           position={[
             0,
             0.18 +
@@ -439,44 +473,40 @@ export function AutoMachine() {
             0,
           ]}
           scale={[
-            0.31,
+            0.17,
             Math.max(
-              0.005,
+              0.004,
               (milk / caps(useGame.getState().ops.levels, "milkTank")) * tankH,
             ),
-            0.31,
+            0.17,
           ]}
-          color="#efe4c9"
+          color="#f2e6cc"
+          rough={0.4}
         />
-        <Box
+        <Cylinder
           position={[0, 0.18 + tankH, 0]}
-          scale={[0.43, 0.055, 0.43]}
-          color="#647a68"
+          scale={[0.215, 0.056, 0.215]}
+          color="#78917b"
+          rough={0.5}
         />
         <Label
-          text={`${milk}/${caps(useGame.getState().ops.levels, "milkTank")} MILK`}
+          text="MILK"
           position={[0, 0.38, 0.205]}
           size={[0.34, 0.12]}
           font={60}
           background="#647a68"
         />
-        <Cylinder
-          position={[-0.37, 0.56, 0]}
-          rotation={[0, 0, Math.PI / 2]}
-          scale={[0.018, 0.35, 0.018]}
-          color="#363f38"
-          rough={0.3}
-        />
       </group>
+      <mesh geometry={milkTube} material={material("#52604e", 0.25, 0.35)} />
       <group position={[-1.65, 0, 0.06]}>
         <Cylinder
           position={[0, 0.06, 0]}
           scale={[0.23, 0.08, 0.23]}
           color="#657b67"
         />
-        <Box
+        <SoftBox
           position={[0, 0.4 + cupLevel * 0.07, -0.17]}
-          scale={[0.07, 0.75 + cupLevel * 0.14, 0.06]}
+          size={[0.07, 0.75 + cupLevel * 0.14, 0.06]}
           color="#6a8570"
         />
         {Array.from({ length: cups }, (_, i) => (
@@ -510,14 +540,14 @@ export function AutoMachine() {
           </group>
         )}
         <Label
-          text={`${cups}/${caps(useGame.getState().ops.levels, "cupDispenser")} CUPS`}
+          text="PAPER CUPS"
           position={[0, 0.025, 0.24]}
           size={[0.55, 0.12]}
           font={60}
           background="#4c6452"
         />
       </group>
-      <group position={[1.94, 0.09, 0]}>
+      <group position={[1.94, 0.09, 0]} scale={syrup ? 1 : 0.96}>
         <Cylinder
           position={[0, 0.25, 0]}
           scale={[0.105, 0.5, 0.105]}
@@ -529,7 +559,7 @@ export function AutoMachine() {
           color="#445344"
         />
         <Label
-          text={`VANILLA ${syrup}/10`}
+          text="VANILLA"
           position={[0, 0.25, 0.112]}
           size={[0.23, 0.13]}
           font={55}
@@ -563,7 +593,7 @@ export function AutoMachine() {
         </group>
       )}
       <Label
-        text={`${grounds}/8 GROUNDS`}
+        text="GROUNDS"
         position={[0.43, 0.17, 0.6]}
         size={[0.35, 0.08]}
         font={50}
@@ -611,53 +641,65 @@ export function Bakery() {
   });
   return (
     <>
-      <group position={[0.75, 1.45, -3.05]} scale={1 + level * 0.06}>
-        <Box
+      <group
+        position={layout.oven}
+        rotation={[0, 0, 0]}
+        scale={0.9 * (1 + level * 0.06)}
+      >
+        <SoftBox
           position={[0, 0.36, -0.34]}
-          scale={[1.12, 0.73, 0.09]}
+          size={[1.12, 0.73, 0.09]}
           color="#647368"
           metal={0.3}
           rough={0.36}
         />
-        <Box
+        <SoftBox
           position={[-0.52, 0.36, 0]}
-          scale={[0.08, 0.73, 0.77]}
+          size={[0.08, 0.73, 0.77]}
           color="#647368"
           metal={0.3}
           rough={0.36}
         />
-        <Box
+        <SoftBox
           position={[0.52, 0.36, 0]}
-          scale={[0.08, 0.73, 0.77]}
+          size={[0.08, 0.73, 0.77]}
           color="#647368"
           metal={0.3}
           rough={0.36}
         />
-        <Box
+        <SoftBox
           position={[0, 0.68, 0]}
-          scale={[1.1, 0.09, 0.77]}
+          size={[1.1, 0.09, 0.77]}
           color="#647368"
           metal={0.3}
           rough={0.36}
         />
-        <Box
+        <SoftBox
           position={[0, 0.07, 0]}
-          scale={[1.1, 0.09, 0.77]}
+          size={[1.1, 0.09, 0.77]}
           color="#647368"
           metal={0.3}
           rough={0.36}
         />
-        <Box
+        <SoftBox
           position={[0, 0.32, -0.275]}
-          scale={[0.91, 0.45, 0.018]}
+          size={[0.91, 0.45, 0.018]}
           color={warm ? "#cba063" : "#283c36"}
         />
-        <Box
+        <SoftBox
           position={[0, 0.14, 0.18]}
-          scale={[0.81, 0.03, 0.45]}
+          size={[0.81, 0.03, 0.45]}
           color="#839184"
           metal={0.5}
         />
+        {warm && (
+          <pointLight
+            position={[0, 0.38, 0.17]}
+            intensity={0.45}
+            color="#ffb65e"
+            distance={1.3}
+          />
+        )}
         <group ref={cookies}>
           {Array.from({ length: quantity }, (_, i) => (
             <group
@@ -683,9 +725,9 @@ export function Bakery() {
               depthWrite={false}
             />
           </mesh>
-          <Box
+          <SoftBox
             position={[0, 0.31, 0.04]}
-            scale={[0.57, 0.03, 0.06]}
+            size={[0.57, 0.03, 0.06]}
             color="#d5d4bd"
             metal={0.7}
           />
@@ -714,19 +756,31 @@ export function Bakery() {
         />
       </group>
       <group
-        position={[-4.65, 1.45, -3.05]}
+        position={layout.display}
+        rotation={[0, -Math.PI / 2, 0]}
         scale={[1 + displayLevel * 0.12, 1 + displayLevel * 0.16, 1]}
       >
-        <Box
+        <SoftBox
           position={[0, 0.075, 0]}
-          scale={[1.22, 0.15, 0.62]}
+          size={[1.22, 0.15, 0.62]}
           color="#7e6550"
         />
-        <Box
+        <SoftBox
           position={[0, 0.63, 0]}
-          scale={[1.28, 0.05, 0.7]}
+          size={[1.28, 0.05, 0.7]}
           color="#b5986c"
         />
+        {[-0.59, 0.59].flatMap((x) =>
+          [-0.28, 0.28].map((z) => (
+            <Rod
+              key={x + ":" + z}
+              from={[x, 0.13, z]}
+              to={[x, 0.63, z]}
+              r={0.023}
+              color="#8a9c8b"
+            />
+          )),
+        )}
         <mesh position={[0, 0.38, 0]}>
           <boxGeometry args={[1.2, 0.46, 0.61]} />
           <meshStandardMaterial
@@ -750,7 +804,7 @@ export function Bakery() {
           </group>
         ))}
         <Label
-          text={`WARM COOKIES · ${display.quantity}/${equipmentDisplay(displayLevel)}`}
+          text="FRESHLY BAKED · COOKIES"
           position={[0, 0.08, 0.324]}
           size={[1.09, 0.1]}
           font={48}
@@ -760,4 +814,3 @@ export function Bakery() {
     </>
   );
 }
-const equipmentDisplay = (level: number) => [12, 24, 40][level];

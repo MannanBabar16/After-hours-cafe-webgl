@@ -1,3 +1,7 @@
+import { studioEnvironment } from "./art";
+import type { Order } from "../store/operationTypes";
+import { ProductIcon } from "../ui/ProductIcon";
+import { layout, counterSpot, stationVisuals } from "../data/layout";
 import { useEffect, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
@@ -13,12 +17,7 @@ import {
   miloMotion,
 } from "./Characters";
 import { useGame } from "../store/game";
-import {
-  stationPositions,
-  supplyCatalog,
-  products,
-  caps,
-} from "../data/operations";
+import { stationPositions, supplyCatalog, caps } from "../data/operations";
 import type { StationId } from "../data/operations";
 import { customerById } from "../data/content";
 import {
@@ -33,8 +32,7 @@ import type { Focus } from "./controls";
 import { AutoMachine, Bakery, CarryVisual } from "./OperationsProps";
 import { Stockroom, Traffic, ServingRobot } from "./OperationsWorld";
 import { audio } from "./audio";
-import { orderFocusBias } from "./focus";
-import { Icon } from "../ui/Icon";
+import { orderFocusBias, targetFacing } from "./focus";
 
 export function stationLabel(id: StationId) {
   const s = useGame.getState();
@@ -104,6 +102,13 @@ function PlayerController() {
     Object.assign(playerMotion, { ...p, walking: false });
     view.yaw = p.angle;
   }, [shift, phase === "title"]);
+  const carryAge = useRef(0);
+  useEffect(() => {
+    carryAge.current = 0;
+    carryGroup.current?.traverse((o) => {
+      if (o instanceof THREE.Mesh) o.castShadow = false;
+    });
+  }, [carry]);
   useFrame(({ camera }, rawDt) => {
     const dt = Math.min(rawDt, 0.05),
       s = useGame.getState(),
@@ -148,6 +153,7 @@ function PlayerController() {
         useGame.setState({ player: { x: m.x, z: m.z, angle: m.angle } });
     }
     if (carryGroup.current) {
+      carryAge.current += dt;
       if (s.cameraMode === "first") {
         carryGroup.current.position.copy(camera.position);
         carryGroup.current.quaternion.copy(camera.quaternion);
@@ -167,6 +173,8 @@ function PlayerController() {
         carryGroup.current.scale.setScalar(0.82);
       }
     }
+    if (carryGroup.current)
+      carryGroup.current.position.y -= 0.1 * Math.exp(-carryAge.current * 14);
     focusTimer.current += dt;
     if (focusTimer.current < 0.12) return;
     focusTimer.current = 0;
@@ -181,18 +189,20 @@ function PlayerController() {
       label: string,
       position: readonly [number, number, number],
       bias = 0,
+      aim = position,
     ) => {
       const dx = position[0] - m.x,
         dz = position[2] - m.z,
         distance = Math.hypot(dx, dz),
-        facing = distance
-          ? (Math.sin(s.cameraMode === "first" ? view.yaw : m.angle) * dx +
-              Math.cos(s.cameraMode === "first" ? view.yaw : m.angle) * dz) /
-            distance
-          : 1;
+        facing = targetFacing(
+          m.x,
+          m.z,
+          s.cameraMode === "first" ? view.yaw : m.angle,
+          aim,
+        );
       if (distance < 1.8 && (s.cameraMode === "first" ? facing > 0.68 : true))
         candidates.push({
-          focus: { kind, id, label, position: [...position], distance },
+          focus: { kind, id, label, position: [...aim], distance },
           score: distance + (1 - facing) * 0.15 + bias,
         });
     };
@@ -214,6 +224,13 @@ function PlayerController() {
         if (box.supply !== match) continue;
         bias = -0.65;
       }
+      if (
+        id === "dough" &&
+        s.carry?.kind === "box" &&
+        s.ops.boxes.find((b) => b.id === (s.carry as { boxId: number }).boxId)
+          ?.supply !== "dough"
+      )
+        continue;
       if (id === "grounds" && (s.carry || s.ops.grounds < 4)) continue;
       if (id === "tray" && s.carry) continue;
       if (id === "robot" && !caps(s.ops.levels, "robot")) continue;
@@ -268,8 +285,15 @@ function PlayerController() {
         position[1],
         position[2],
       ];
-      if (position[2] < -2.5 && position[0] > -6) point[2] = -2.15;
-      consider("station", id, stationLabel(id), point, bias);
+
+      consider(
+        "station",
+        id,
+        stationLabel(id),
+        point,
+        bias,
+        stationVisuals[id],
+      );
     }
     if (!s.carry)
       for (const box of s.ops.boxes)
@@ -278,7 +302,13 @@ function PlayerController() {
             "box",
             box.id,
             `${box.quantity ? "Pick up" : "Recycle"} ${supplyCatalog[box.supply].name.toLowerCase()} · ${box.quantity}`,
-            [box.x, box.location === "storage" ? 1.3 : 0.6, box.z],
+            [
+              box.x,
+              box.location === "storage"
+                ? Math.max(0.12, 2.49 - Math.floor(box.slot / 5) * 0.63) + 0.65
+                : 0.6,
+              box.z,
+            ],
             -0.1,
           );
     if (!s.carry)
@@ -360,8 +390,30 @@ function CameraRig() {
     const click = () => {
       void capturePointer();
     };
+    const zoom = (event: WheelEvent) => {
+      const s = useGame.getState();
+      if (
+        s.cameraMode !== "isometric" ||
+        s.phone ||
+        s.workstation ||
+        s.paused ||
+        s.help ||
+        s.settingsOpen
+      )
+        return;
+      event.preventDefault();
+      view.zoom = THREE.MathUtils.clamp(
+        view.zoom + event.deltaY * 0.00035,
+        0.88,
+        1.14,
+      );
+    };
+    gl.domElement.addEventListener("wheel", zoom, { passive: false });
     gl.domElement.addEventListener("click", click);
-    return () => gl.domElement.removeEventListener("click", click);
+    return () => {
+      gl.domElement.removeEventListener("click", click);
+      gl.domElement.removeEventListener("wheel", zoom);
+    };
   }, [gl]);
   useFrame((_, rawDt) => {
     const dt = Math.min(rawDt, 0.05),
@@ -370,20 +422,27 @@ function CameraRig() {
     const first =
       s.cameraMode === "first" && s.phase !== "title" && s.phase !== "summary";
     if (first) {
-      position.current.set(p.x, 1.62, p.z);
+      const atWindow =
+        Math.hypot(p.x - stationPositions.window[0], p.z - layout.windowZ) < 1.15 &&
+        Math.sin(view.yaw) > 0.65;
+      const eyeHeight = atWindow ? 1.17 : 1.62;
+      position.current.set(p.x, eyeHeight, p.z);
       target.current.set(
         p.x + Math.sin(view.yaw) * Math.cos(view.pitch) * 3,
-        1.62 + Math.sin(view.pitch) * 3,
+        eyeHeight + Math.sin(view.pitch) * 3,
         p.z + Math.cos(view.yaw) * Math.cos(view.pitch) * 3,
       );
     } else if (s.workstation) {
-      position.current.set(-0.85, 3.28, -0.35);
-      target.current.set(-1.5, 1.95, -3.0);
+      position.current.set(3.2, 3.18, 0.2);
+      target.current.set(2.65, 1.75, -2.6);
     } else {
-      const x = s.phase === "title" ? -1 : p.x * 0.18 - 0.4,
-        z = s.phase === "title" ? 0.35 : p.z * 0.12;
-      target.current.set(x, 0.55, z);
-      position.current.set(x + 13.4, 16, z + 13.4);
+      const x = s.phase === "title" ? 0.55 : 0.55 + p.x * 0.055,
+        z = s.phase === "title" ? -0.1 : -0.1 + p.z * 0.04;
+      target.current.set(x, 0.6, z);
+      const aspect =
+        camera instanceof THREE.PerspectiveCamera ? camera.aspect : 1.7;
+      const scale = view.zoom * Math.min(2.35, Math.max(1, 1.3 / aspect));
+      position.current.set(x + 13 * scale, 16 * scale, z + 13 * scale);
     }
     const speed = first
       ? 10 + (1 - s.settings.smoothing) * 6
@@ -475,9 +534,12 @@ function Atmosphere() {
   const dummy = useRef(new THREE.Object3D());
   const purchased = useGame((s) => s.purchased);
   const graphics = useGame((s) => s.settings.graphics);
+  const stockPoses = useGame((s) =>
+    s.ops.boxes.map((b) => `${b.id}:${b.location}:${b.x}:${b.z}`).join("|"),
+  );
   useEffect(() => {
     if (light.current) light.current.shadow.needsUpdate = true;
-  }, [purchased, graphics]);
+  }, [purchased, graphics, stockPoses]);
   useEffect(() => {
     for (let i = 0; i < 320; i++) {
       spots.current[i * 3] = 6.35 + Math.random() * 6;
@@ -524,7 +586,8 @@ function Atmosphere() {
             : 0.8
           : 1;
       light.current.intensity =
-        (s.phase === "closing" || s.phase === "summary" ? 1.6 : 2.3) * flicker;
+        (s.phase === "closing" || s.phase === "summary" ? 1.25 : 1.85) *
+        flicker;
     }
   });
   return (
@@ -534,8 +597,8 @@ function Atmosphere() {
       <directionalLight
         ref={light}
         position={[2, 9, 5]}
-        color="#ffe2ac"
-        intensity={2.3}
+        color="#fff0d6"
+        intensity={1.85}
         castShadow
         shadow-autoUpdate={false}
         shadow-needsUpdate
@@ -546,18 +609,19 @@ function Atmosphere() {
         shadow-camera-bottom={-9}
         shadow-bias={-0.0006}
         shadow-normalBias={0.025}
+        shadow-radius={3}
       />
       <pointLight
-        position={[-2, 3, -2.3]}
+        position={[2.35, 2.96, -1.3]}
         color="#ffc978"
-        intensity={14}
+        intensity={7}
         distance={9}
         decay={2}
       />
       <pointLight
-        position={[3.4, 3, 0.6]}
+        position={[-3.45, 2.8, 0.3]}
         color="#ffe0a1"
-        intensity={9}
+        intensity={6}
         distance={7}
         decay={2}
       />
@@ -579,92 +643,145 @@ function Atmosphere() {
   );
 }
 
+function CapacityNote({ id }: { id: string | number }) {
+  const s = useGame();
+  const list: [string, number, number][] = [];
+  if (id === "machine" || id === "hopper")
+    list.push(["Beans", s.ops.containers.beans, caps(s.ops.levels, "hopper")]);
+  if (id === "machine" || id === "milk")
+    list.push(["Milk", s.ops.containers.milk, caps(s.ops.levels, "milkTank")]);
+  if (id === "cups" || id === "machine")
+    list.push([
+      "Cups",
+      s.ops.containers.cups,
+      caps(s.ops.levels, "cupDispenser"),
+    ]);
+  if (id === "display")
+    list.push([
+      "Cookies",
+      s.ops.display.quantity,
+      caps(s.ops.levels, "display"),
+    ]);
+  if (id === "oven")
+    list.push(["Tray", s.ops.oven.quantity, caps(s.ops.levels, "oven")]);
+  if (id === "dough") list.push(["Dough", s.ops.containers.dough, 24]);
+  if (id === "syrup") list.push(["Vanilla", s.ops.containers.syrup, 10]);
+  return list.length ? (
+    <div className="capacity-note">
+      {list.map(([name, amount, total]) => (
+        <span key={name}>
+          {name}
+          <b>
+            {amount}/{total}
+          </b>
+        </span>
+      ))}
+    </div>
+  ) : null;
+}
 function WorldPrompts() {
   const focus = useFocus((s) => s.focus),
     mode = useGame((s) => s.cameraMode),
-    phone = useGame((s) => s.phone);
-  if (!focus || mode === "first" || phone) return null;
+    phone = useGame((s) => s.phone),
+    workstation = useGame((s) => s.workstation);
+  if (!focus || mode === "first" || phone || workstation) return null;
   return (
-    <Html position={focus.position} center zIndexRange={[9, 0]}>
-      <button className="world-prompt" onClick={interact}>
-        <kbd>E</kbd>
-        <span>{focus.label}</span>
-      </button>
+    <Html
+      position={[
+        focus.position[0],
+        focus.position[1] + 0.15,
+        focus.position[2],
+      ]}
+      center
+      zIndexRange={[9, 0]}
+    >
+      <div className="world-context">
+        <button className="world-prompt" onClick={interact}>
+          <kbd>E</kbd>
+          <span>{focus.label}</span>
+        </button>
+        <CapacityNote id={focus.id} />
+      </div>
     </Html>
   );
 }
-function OrderBubbles() {
-  const orders = useGame((s) => s.ops.orders),
-    visitors = useGame((s) => s.visitors),
+function OrderBubble({ order }: { order: Order }) {
+  const anchor = useRef<THREE.Group>(null),
     mode = useGame((s) => s.cameraMode),
-    phase = useGame((s) => s.phase);
-  if (phase === "title" || phase === "summary") return null;
+    phone = useGame((s) => s.phone);
+  useFrame(() => {
+    if (!anchor.current) return;
+    const m = visitorMotions.get(order.visitorUid);
+    const point =
+      order.channel === "drive"
+        ? [layout.laneX, 2.03, layout.windowZ - order.vehicleZ]
+        : [
+            m?.x ?? counterSpot(order.id)[0],
+            2.1 + (order.accepted ? 0 : (order.id % 3) * 0.35),
+            m?.z ?? counterSpot(order.id)[1],
+          ];
+    anchor.current.position.set(point[0], point[1], point[2]);
+    anchor.current.visible =
+      !phone &&
+      (mode !== "first" ||
+        Math.hypot(point[0] - playerMotion.x, point[2] - playerMotion.z) < 4.3);
+  });
+  if (phone) return null;
+  return (
+    <group ref={anchor}>
+      <Html center zIndexRange={[6, 0]}>
+        <div className={`order-bubble ${order.channel}`}>
+          <small>
+            {order.channel === "drive"
+              ? "Drive thru"
+              : customerById(order.customer).name}
+          </small>
+          <div className="bubble-products">
+            {order.lines.map((l) => (
+              <span
+                key={l.product}
+                className={l.delivered === l.quantity ? "done" : ""}
+              >
+                <ProductIcon product={l.product} size={27} />
+                <b>{l.quantity - l.delivered || "✓"}</b>
+              </span>
+            ))}
+          </div>
+          <em>
+            {order.accepted ? "Your order is on its way" : "E · take order"}
+          </em>
+        </div>
+      </Html>
+    </group>
+  );
+}
+function OrderBubbles() {
+  const s = useGame();
+  if (s.phase === "title" || s.phase === "summary" || s.workstation)
+    return null;
   return (
     <>
-      {orders
-        .filter((o) => !o.paid)
-        .map((order) => {
-          const visitor = visitors.find((v) => v.uid === order.visitorUid);
-          const point =
-            order.channel === "drive"
-              ? [5.9, 2.1, 0]
-              : [
-                  1.7 + (order.id % 3) * 0.38,
-                  2.13 + (order.id % 3) * 0.35,
-                  -1.45 + (order.id % 3) * 0.3,
-                ];
-          if (
-            (order.channel === "indoor" && visitor?.phase === "entering") ||
-            (order.channel === "drive" && order.vehiclePhase !== "waiting")
-          )
-            return null;
-          if (
-            mode === "first" &&
-            Math.hypot(point[0] - playerMotion.x, point[2] - playerMotion.z) > 5
-          )
-            return null;
-          return (
-            <Html
-              key={order.id}
-              position={point as [number, number, number]}
-              center
-              zIndexRange={[6, 0]}
-            >
-              <div className={`order-bubble ${order.channel}`}>
-                <small>
-                  {order.channel === "drive"
-                    ? "DRIVE-THROUGH"
-                    : customerById(order.customer).name}{" "}
-                  · {order.accepted ? "IN PROGRESS" : "ORDER HERE"}
-                </small>
-                {order.lines.map((line) => (
-                  <span
-                    key={line.product}
-                    className={line.delivered === line.quantity ? "done" : ""}
-                  >
-                    <Icon
-                      name={line.product === "cookie" ? "cookie" : "coffee"}
-                      size={15}
-                    />
-                    {products[line.product].name}
-                    <b>{line.quantity - line.delivered || "✓"}</b>
-                  </span>
-                ))}
-                <small className="bubble-quote">
-                  $
-                  {order.lines
-                    .reduce((sum, line) => sum + line.price * line.quantity, 0)
-                    .toFixed(2)}{" "}
-                  · paid when complete
-                </small>
-              </div>
-            </Html>
-          );
-        })}
+      {s.ops.orders
+        .filter(
+          (o) =>
+            !o.paid &&
+            (o.channel === "drive"
+              ? o.vehiclePhase === "waiting"
+              : s.visitors.find((v) => v.uid === o.visitorUid)?.phase !==
+                "entering"),
+        )
+        .map((order) => (
+          <OrderBubble key={order.id} order={order} />
+        ))}
     </>
   );
 }
 function World() {
+  const scene = useThree((s) => s.scene);
+  const renderer = useThree((s) => s.gl);
+  useEffect(() => {
+    scene.environmentIntensity = 0.24;
+  }, [scene]);
   const visitors = useGame((s) => s.visitors),
     purchased = useGame((s) => s.purchased);
   useEffect(() => {
@@ -674,6 +791,11 @@ function World() {
       state: useGame,
       motion: playerMotion,
       focus: useFocus,
+      walkable: isWalkable,
+      visitors: visitorMotions,
+      view,
+      scene,
+      renderer: renderer.info,
     };
     return () => {
       delete target.__CAFE_DEV__;
@@ -686,6 +808,7 @@ function World() {
   }, [visitors.length]);
   return (
     <>
+      <primitive attach="environment" object={studioEnvironment} />
       <AdaptiveResolution />
       <CameraRig />
       <Atmosphere />
@@ -720,12 +843,12 @@ export function Scene() {
         preserveDrawingBuffer: true,
       }}
       onCreated={({ gl }) => {
-        gl.setClearColor("#203139");
+        gl.setClearColor("#233740");
         gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 1.13;
+        gl.toneMappingExposure = 1.06;
       }}
     >
-      <fog attach="fog" args={["#203139", 34, 70]} />
+      <fog attach="fog" args={["#233740", 55, 95]} />
       <World />
     </Canvas>
   );

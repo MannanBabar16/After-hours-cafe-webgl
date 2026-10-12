@@ -1,3 +1,4 @@
+import { ProductIcon } from "./ProductIcon";
 import { useEffect, useState } from "react";
 import { useGame } from "../store/game";
 import {
@@ -45,7 +46,7 @@ export function HUD() {
     !s.ops.open && s.phase !== "closing"
       ? "Prepare, then open your café."
       : s.business.lifetimeServed === 0
-        ? "Take an order at the counter. A cup is waiting on the left."
+        ? "Take an order, then collect a cup beside the coffee machine."
         : s.business.lifetimeServed === 1
           ? "A first regular. Try a delivery, or answer the drive-through."
           : s.business.lifetimeServed < 4
@@ -55,7 +56,7 @@ export function HUD() {
               : "A capable little café. Find your own rhythm.";
   return (
     <>
-      <header className="operations-top">
+      <header className="operations-top miniature-top">
         <div className="cafe-brand">
           <span className="brand-mark">
             <Icon name="coffee" size={24} />
@@ -104,7 +105,7 @@ export function HUD() {
       {!s.phone && !s.workstation && (
         <aside className="operations-orders">
           <div className="tiny-heading">
-            A LITTLE SOMETHING WARM <span>{active.length} ORDERS</span>
+            CURRENT ORDERS <span>{active.length} ORDERS</span>
           </div>
           {active.slice(0, 4).map((order) => (
             <article className={`order-ticket ${order.channel}`} key={order.id}>
@@ -129,10 +130,7 @@ export function HUD() {
                       : "ticket-item"
                   }
                 >
-                  <Icon
-                    name={line.product === "cookie" ? "cookie" : "coffee"}
-                    size={16}
-                  />
+                  <ProductIcon product={line.product} size={29} />
                   <span>{products[line.product].name}</span>
                   <b>{line.quantity - line.delivered || "✓"}</b>
                 </div>

@@ -6,6 +6,7 @@ import { audio } from "./audio";
 import { playerMotion } from "./Characters";
 export const keys = new Set<string>();
 export const view = {
+  zoom: 1,
   yaw: Math.PI,
   pitch: -0.07,
   locked: false,

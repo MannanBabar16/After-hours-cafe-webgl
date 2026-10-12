@@ -1,102 +1,67 @@
-import { useRef, useMemo } from "react";
+import { layout } from "../data/layout";
+import { SoftBox, Oak, Rod, Ring } from "./art";
+import { useRef, useMemo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { Box, Cylinder, Label, GroundShadow } from "./primitives";
+import { Box, Ball, Cylinder, Label, GroundShadow } from "./primitives";
 import { useGame } from "../store/game";
 import { caps } from "../data/operations";
 import { BoxVisual, CarryVisual, PaperCup, Cookie } from "./OperationsProps";
-import { Plant, Pendant } from "./Environment";
+import { Plant } from "./Environment";
 import type { Order } from "../store/operationTypes";
-
 export function Stockroom() {
-  const boxes = useGame((s) => s.ops.boxes),
-    loose = useGame((s) => s.ops.loose),
-    shelfLevel = useGame((s) => s.ops.levels.storage),
-    dough = useGame((s) => s.ops.containers.dough),
-    handoff = useGame((s) => s.ops.handoff),
-    spills = useGame((s) => s.ops.spills),
-    carry = useGame((s) => s.carry);
-  const open = useGame((s) => s.ops.open),
-    trayCapacity = useGame((s) => caps(s.ops.levels, "tray"));
+  const s = useGame(),
+    boxes = s.ops.boxes,
+    loose = s.ops.loose;
   return (
     <>
-      <group>
-        <Box
-          position={[-7.55, -0.08, 0.8]}
-          scale={[3.15, 0.16, 7.4]}
-          color="#b99f7c"
-        />
-        <Box
-          position={[-9.05, 1.5, 0.75]}
-          scale={[0.14, 3.1, 7.5]}
-          color="#c9c2a9"
-        />
-        <Box
-          position={[-7.5, 1.5, -2.8]}
-          scale={[3.2, 3.1, 0.15]}
-          color="#cec5af"
-        />
+      <group position={[3.2, 0, -5.89]}>
+        <Oak position={[-2.0, 1.52, 0]} size={[0.1, 3, 0.6]} />
+        <Oak position={[2.0, 1.52, 0]} size={[0.1, 3, 0.6]} />
+        {[0.55, 1.18, 1.81, 2.44].map((y) => (
+          <Oak key={y} position={[0, y, 0]} size={[4.15, 0.095, 0.75]} />
+        ))}
         <Label
-          position={[-7.55, 2.72, -2.7]}
-          text="THE LITTLE STOCKROOM"
-          size={[2.5, 0.4]}
-          font={61}
-          background="#cec5af"
-          color="#5c6750"
+          position={[0, 2.92, 0.06]}
+          text="MOON SUPPLIES · STOCKROOM"
+          size={[3.1, 0.24]}
+          font={64}
+          background="#c99a70"
+          color="#405846"
         />
-        <Box
-          position={[-7.6, 0.45, -1.96]}
-          scale={[1.85, 0.9, 0.6]}
-          color="#6c836c"
-        />
-        <Box
-          position={[-7.6, 0.95, -1.96]}
-          scale={[1.95, 0.12, 0.7]}
-          color="#d3b38a"
-        />
-        <Box
-          position={[-7.45, 1.08, -1.87]}
-          scale={[0.69, 0.17, 0.42]}
-          color="#bf9d75"
-        />
-        <Label
-          position={[-7.5, 1.1, -1.64]}
-          text={`COOKIE DOUGH · ${dough}/24`}
-          size={[0.76, 0.15]}
-          font={53}
-          background="#bf9d75"
-          color="#435c45"
-        />
-        <Box
-          position={[-8.65, 1.5, 0.8]}
-          scale={[0.13, 2.9, 4.1]}
-          color="#6b7660"
-        />
-        {Array.from({ length: 3 + shelfLevel }, (_, i) => (
-          <Box
+        {["BEANS", "MILK", "CUPS", "DOUGH", "VANILLA"].map((name, i) => (
+          <Label
+            key={name}
+            position={[-1.54 + i * 0.77, 2.39, 0.39]}
+            text={name}
+            size={[0.61, 0.11]}
+            font={50}
+            background="#f4e8d6"
+            color="#624936"
+          />
+        ))}
+      </group>
+      <group position={layout.dough}>
+        <Oak position={[0, 0.035, 0]} size={[0.7, 0.07, 0.46]} />
+        {Array.from({ length: Math.min(s.ops.containers.dough, 6) }, (_, i) => (
+          <Ball
             key={i}
-            position={[-8.15, 0.6 + i * 0.65, 0.8]}
-            scale={[0.9, 0.065, 3.9]}
-            color="#a9845b"
+            position={[
+              -0.2 + (i % 3) * 0.19,
+              0.11,
+              Math.floor(i / 3) * 0.16 - 0.08,
+            ]}
+            scale={[0.06, 0.04, 0.06]}
+            color="#e2c18d"
           />
         ))}
         <Label
-          position={[-8.3, 2.77, 2.45]}
-          rotation={[0, Math.PI / 2, 0]}
-          text={`STORAGE · ${caps(useGame.getState().ops.levels, "storage")} BOXES`}
-          size={[1.2, 0.23]}
-          background="#445c49"
-          font={50}
-        />
-        <Pendant position={[-7.55, 3.1, 1.4]} />
-        <Plant position={[-8.45, 0, 3.7]} scale={0.7} />
-        <Label
-          position={[-5.9, 2.7, 2.4]}
-          rotation={[0, Math.PI / 2, 0]}
-          text="STOCKROOM ←"
-          size={[1.25, 0.25]}
-          background="#5b7561"
-          font={55}
+          text="COOKIE DOUGH"
+          position={[0, 0.09, -0.23]}
+          size={[0.8, 0.13]}
+          font={54}
+          background="#c99a70"
+          color="#405846"
         />
       </group>
       {boxes
@@ -107,156 +72,111 @@ export function Stockroom() {
             position={[
               box.x,
               box.location === "storage"
-                ? 0.65 + Math.floor(box.slot / 4) * 0.49
-                : 0,
+                ? Math.max(0.12, 2.49 - Math.floor(box.slot / 5) * 0.63)
+                : box.z > 4.8
+                  ? -0.13
+                  : 0.065,
               box.z,
             ]}
-            rotation={[0, box.location === "storage" ? Math.PI / 2 : 0, 0]}
             onClick={(e) => {
               e.stopPropagation();
-              if (
-                Math.hypot(
-                  useGame.getState().player.x - box.x,
-                  useGame.getState().player.z - box.z,
-                ) < 1.8
-              )
-                useGame.getState().takeBox(box.id);
+              if (Math.hypot(s.player.x - box.x, s.player.z - box.z) < 1.8)
+                s.takeBox(box.id);
             }}
           >
             <BoxVisual box={box} small={box.location === "storage"} />
-            <GroundShadow position={[0, 0.005, 0]} size={0.8} />
           </group>
         ))}
-      {loose.map((object) => (
+      {loose.map((obj) => (
         <group
-          key={object.id}
-          position={[object.x, 0.04, object.z]}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (
-              Math.hypot(
-                useGame.getState().player.x - object.x,
-                useGame.getState().player.z - object.z,
-              ) < 1.8
-            )
-              useGame.getState().pickupLoose(object.id);
-          }}
+          key={obj.id}
+          position={[obj.x, obj.z > 4.8 ? -0.13 : 0.065, obj.z]}
         >
-          <CarryVisual carry={object.carry} />
+          <CarryVisual carry={obj.carry} />
         </group>
       ))}
-      <group position={[-5.2, 0, 2.05]}>
-        <Cylinder
-          position={[0, 0.32, 0]}
-          scale={[0.29, 0.64, 0.29]}
-          color="#536756"
-        />
-        <Cylinder
-          position={[0, 0.68, 0]}
-          scale={[0.31, 0.08, 0.31]}
-          color="#8d9b7c"
-        />
-        <Label
-          text="REUSE / RECYCLE"
-          position={[0, 0.39, 0.294]}
-          size={[0.43, 0.17]}
-          background="#536756"
-          font={55}
-        />
-      </group>
-      <group position={[1.5, 1.48, -3.05]}>
-        <Box scale={[0.75, 0.035, 0.56]} color="#a58e70" />
-        {handoff.map((item, i) => (
+      <group position={[0.55, 1.18, -0.65]}>
+        <SoftBox size={[0.69, 0.025, 0.56]} radius={0.07} color="#d3c3a1" />
+        {s.ops.handoff.map((item, i) => (
           <group
             key={item.id}
-            position={[-0.25 + (i % 3) * 0.24, 0.03, Math.floor(i / 3) * 0.25]}
+            position={[
+              -0.19 + (i % 3) * 0.19,
+              0.03,
+              Math.floor(i / 3) * 0.18 - 0.08,
+            ]}
           >
             {item.product === "cookie" ? (
-              <Cookie quality={item.quality} scale={0.8} />
+              <Cookie scale={0.7} />
             ) : (
-              <PaperCup fill={1} product={item.product} scale={0.8} />
+              <PaperCup fill={1} product={item.product} scale={0.7} />
             )}
           </group>
         ))}
         <Label
-          text="HANDOFF"
-          position={[0, 0.02, 0.3]}
-          size={[0.6, 0.08]}
-          background="#a58e70"
-          color="#3f5742"
-          font={46}
+          text="PICK UP · THANK YOU"
+          position={[-0.48, -0.28, 0]}
+          rotation={[0, -Math.PI / 2, 0]}
+          size={[0.74, 0.14]}
+          font={56}
+          background="#78917b"
         />
       </group>
-      <group position={[1.6, 1.46, -2.63]}>
-        <Box scale={[0.62, 0.025, 0.28]} color="#9d8664" />
+      <group position={[1.05, 1.19, -0.55]}>
+        <Oak size={[0.66, 0.03, 0.44]} />
         <Label
-          text={`SERVING TRAY · ${trayCapacity} ITEMS`}
-          position={[0, 0.02, 0.15]}
-          size={[0.6, 0.07]}
-          font={46}
-          background="#9d8664"
-          color="#fff0cf"
+          position={[0, 0.021, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          text={`SERVING TRAY · ${caps(s.ops.levels, "tray")}`}
+          size={[0.58, 0.31]}
+          font={48}
+          background="#c99a70"
+          color="#405846"
         />
       </group>
-      {spills.map((spill) => (
+      <group position={[4.85, 0, 3.58]}>
+        <Cylinder
+          position={[0, 0.39, 0]}
+          scale={[0.22, 0.65, 0.22]}
+          color="#798571"
+        />
+        <SoftBox
+          position={[0, 0.74, 0]}
+          size={[0.5, 0.11, 0.5]}
+          radius={0.13}
+          color="#455d48"
+        />
+        <SoftBox
+          position={[0, 0.746, 0]}
+          size={[0.29, 0.006, 0.21]}
+          radius={0.06}
+          color="#283d32"
+        />
+        <Label
+          position={[0, 0.46, 0.226]}
+          text="RECYCLE"
+          size={[0.27, 0.12]}
+          font={55}
+          background="#798571"
+          color="#f4e8d6"
+        />
+      </group>
+      {s.ops.spills.map((spill) => (
         <mesh
           key={spill.id}
-          position={[spill.x, 0.021, spill.z]}
+          position={[spill.x, 0.072, spill.z]}
           rotation={[-Math.PI / 2, 0, 0]}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (
-              !carry &&
-              Math.hypot(
-                useGame.getState().player.x - spill.x,
-                useGame.getState().player.z - spill.z,
-              ) < 1.8
-            )
-              useGame.getState().cleanSpill(spill.id);
-          }}
         >
-          <circleGeometry args={[0.28, 18]} />
+          <circleGeometry args={[0.28, 20]} />
           <meshStandardMaterial
-            color="#5b3e29"
+            color="#624936"
             transparent
-            opacity={0.6}
-            roughness={0.18}
+            opacity={0.65}
+            roughness={0.25}
           />
         </mesh>
       ))}
-      <group position={[4.6, 0, 4.5]}>
-        <Box position={[0, 0.07, 0]} scale={[1.4, 0.13, 0.8]} color="#bbb79e" />
-        <Box position={[0.8, 1.5, 0]} scale={[0.1, 3, 0.14]} color="#617b66" />
-        <Label
-          text={open ? "OPEN · COME IN" : "CLOSED · PREPARING"}
-          position={[0.8, 1.5, 0.09]}
-          size={[0.95, 0.23]}
-          background="#49654f"
-          font={52}
-        />
-      </group>
-      <group position={[5.9, 0, -0.1]}>
-        <Box position={[0, 1.12, 0]} scale={[0.7, 0.12, 1.6]} color="#b9926a" />
-        <Box
-          position={[0, 2.2, -0.9]}
-          scale={[0.13, 2.2, 0.13]}
-          color="#4c6b54"
-        />
-        <Box
-          position={[0, 2.2, 0.9]}
-          scale={[0.13, 2.2, 0.13]}
-          color="#4c6b54"
-        />
-        <Box position={[0, 3.26, 0]} scale={[0.2, 0.13, 1.9]} color="#4c6b54" />
-        <Label
-          position={[0.14, 2.74, 0]}
-          rotation={[0, Math.PI / 2, 0]}
-          text="DRIVE-THROUGH\nA LITTLE SOMETHING WARM"
-          size={[1.55, 0.43]}
-          font={52}
-          background="#4c6b54"
-        />
-      </group>
+      <Plant position={[1.57, 0, -4.89]} scale={0.62} />
     </>
   );
 }
@@ -274,7 +194,13 @@ function VehicleModel({
 }) {
   const length = kind === "compact" ? 2.05 : kind === "suv" ? 2.65 : 2.5,
     height = kind === "suv" || kind === "van" ? 0.8 : 0.56;
-  const wheels = useRef<THREE.Group>(null);
+  const wheels = useRef<THREE.Group>(null),
+    vehicle = useRef<THREE.Group>(null);
+  useEffect(() => {
+    vehicle.current?.traverse((o) => {
+      if (o instanceof THREE.Mesh) o.castShadow = false;
+    });
+  }, []);
   useFrame(({ clock }) => {
     if (wheels.current)
       wheels.current.children.forEach(
@@ -282,102 +208,182 @@ function VehicleModel({
       );
   });
   return (
-    <group>
-      <Box
-        position={[0, 0.38, 0]}
-        scale={[1.18, 0.45, truck ? 3.2 : length]}
+    <group ref={vehicle} scale={[1, 1.2, 1]}>
+      <SoftBox
+        position={[0, 0.36, 0]}
+        size={[1.22, 0.44, truck ? 3.2 : length]}
+        radius={0.19}
         color={color}
-        metal={0.3}
-        rough={0.35}
+        metal={0.12}
+        rough={0.48}
       />
-      <Box
-        position={[0, 0.73, truck ? -0.4 : 0]}
-        scale={[1.02, height, truck ? 1.8 : length * 0.53]}
+      <SoftBox
+        position={[0, 0.66, truck ? 1.05 : length * 0.32]}
+        size={[1.08, 0.17, 0.57]}
+        radius={0.075}
         color={color}
-        metal={0.25}
-        rough={0.35}
+        metal={0.12}
       />
-      <Box
-        position={[0, 0.79, truck ? 0.66 : length * 0.27]}
-        rotation={[-0.18, 0, 0]}
-        scale={[0.9, 0.39, 0.035]}
-        color="#3e6874"
-        metal={0.45}
-        rough={0.18}
+      <SoftBox
+        position={[0, 0.96 + height * 0.28, truck ? -0.3 : 0]}
+        size={[1.08, 0.17, truck ? 1.84 : length * 0.55]}
+        radius={0.105}
+        color={color}
+        metal={0.1}
       />
-      <Box
-        position={[-0.6, 0.76, 0]}
-        scale={[0.015, 0.33, 0.65]}
-        color="#48717a"
-        metal={0.4}
-        rough={0.2}
-      />
-      <Box
-        position={[0.6, 0.76, 0]}
-        scale={[0.015, 0.33, 0.65]}
-        color="#48717a"
-        metal={0.4}
-        rough={0.2}
-      />
-      <Box
-        position={[0, 0.37, (truck ? 3.2 : length) / 2 + 0.015]}
-        scale={[0.8, 0.14, 0.03]}
-        color="#c8c6b0"
-        metal={0.8}
-      />
-      {[-0.4, 0.4].map((x) => (
-        <group key={x}>
-          <Box
-            position={[x, 0.55, (truck ? 3.2 : length) / 2 + 0.035]}
-            scale={[0.19, 0.13, 0.035]}
-            color="#ffedb8"
+      {[-0.46, 0.46].flatMap((x) =>
+        [-0.48, 0.48].map((z) => (
+          <Rod
+            key={x + ":" + z}
+            from={[x, 0.54, z]}
+            to={[x * 0.85, 0.98 + height * 0.28, z * 0.78]}
+            r={0.035}
+            color={color}
           />
-          <Box
-            position={[x, 0.53, -(truck ? 3.2 : length) / 2 - 0.035]}
-            scale={[0.18, 0.1, 0.035]}
-            color={braking ? "#ff6f59" : "#a34f3d"}
+        )),
+      )}
+      <mesh
+        position={[0, 0.79, truck ? 1.27 : length * 0.255]}
+        rotation={[-0.22, 0, 0]}
+      >
+        <boxGeometry args={[0.89, 0.42, 0.025]} />
+        <meshStandardMaterial
+          color="#65818b"
+          transparent
+          opacity={0.38}
+          roughness={0.2}
+        />
+      </mesh>
+      {[-0.53, 0.53].map((x) => (
+        <group key={x}>
+          <mesh position={[x, 0.78, 0]}>
+            <boxGeometry args={[0.025, 0.38, truck ? 1.8 : length * 0.52]} />
+            <meshStandardMaterial
+              color="#6c8790"
+              transparent
+              opacity={0.3}
+              roughness={0.2}
+            />
+          </mesh>
+          <SoftBox
+            position={[x, 0.62, 0]}
+            size={[0.06, 0.09, length * 0.5]}
+            radius={0.025}
+            color={color}
+          />
+          <SoftBox
+            position={[x, 0.58, 0.22]}
+            size={[0.025, 0.025, 0.13]}
+            radius={0.012}
+            color="#bdc3ae"
+            metal={0.7}
+          />
+        </group>
+      ))}
+      <group position={[-0.29, 0.68, truck ? 0.85 : 0.2]}>
+        <SoftBox
+          position={[0, 0, 0]}
+          size={[0.27, 0.28, 0.21]}
+          radius={0.08}
+          color="#6d826c"
+        />
+        <group rotation={[0, braking ? -Math.PI / 2 : 0, 0]}>
+        <Ball
+          position={[0, 0.24, 0]}
+          scale={[0.135, 0.15, 0.13]}
+          color="#ddb998"
+        />
+        <Ball
+          position={[0, 0.32, -0.02]}
+          scale={[0.14, 0.085, 0.125]}
+          color="#624936"
+        />
+        <Ball position={[-0.05, 0.26, 0.12]} scale={0.012} color="#3f3a31" />
+        <Ball position={[0.05, 0.26, 0.12]} scale={0.012} color="#3f3a31" />
+        </group>
+        <Ring
+          r={0.1}
+          t={0.012}
+          position={[0, 0.02, 0.2]}
+          rotation={[0.8, 0, 0]}
+          color="#425244"
+        />
+      </group>
+      <SoftBox
+        position={[0, 0.33, (truck ? 3.2 : length) / 2 + 0.005]}
+        size={[1.06, 0.13, 0.075]}
+        radius={0.05}
+        color="#bbbbaa"
+        metal={0.5}
+      />
+      {[-0.39, 0.39].map((x) => (
+        <group key={x}>
+          <SoftBox
+            position={[x, 0.54, (truck ? 3.2 : length) / 2 + 0.027]}
+            size={[0.2, 0.12, 0.046]}
+            radius={0.035}
+            color="#ffe2a5"
+          />
+          <SoftBox
+            position={[x, 0.5, -(truck ? 3.2 : length) / 2 - 0.027]}
+            size={[0.18, 0.12, 0.046]}
+            radius={0.035}
+            color={braking ? "#f99275" : "#af6c59"}
+          />
+          <SoftBox
+            position={[Math.sign(x) * 0.66, 0.74, 0.37]}
+            size={[0.13, 0.08, 0.16]}
+            radius={0.045}
+            color={color}
           />
         </group>
       ))}
       <group ref={wheels}>
-        {[-0.56, 0.56].flatMap((x) =>
+        {[-0.55, 0.55].flatMap((x) =>
           [-0.7, 0.7].map((z) => (
             <group
-              key={`${x}-${z}`}
-              position={[x, 0.24, z * (truck ? 1.5 : 1)]}
+              key={x + ":" + z}
+              position={[x, 0.21, z * (truck ? 1.5 : 1)]}
             >
               <Cylinder
                 rotation={[0, 0, Math.PI / 2]}
-                scale={[0.23, 0.13, 0.23]}
-                color="#303737"
+                scale={[0.22, 0.15, 0.22]}
+                color="#3b4644"
               />
               <Cylinder
-                position={[Math.sign(x) * 0.07, 0, 0]}
+                position={[Math.sign(x) * 0.085, 0, 0]}
                 rotation={[0, 0, Math.PI / 2]}
-                scale={[0.12, 0.014, 0.12]}
-                color="#bbc1ae"
-                metal={0.65}
+                scale={[0.13, 0.017, 0.13]}
+                color="#c9c5b1"
+                metal={0.45}
+              />
+              <Cylinder
+                position={[Math.sign(x) * 0.096, 0, 0]}
+                rotation={[0, 0, Math.PI / 2]}
+                scale={[0.055, 0.019, 0.055]}
+                color="#8d9b87"
               />
             </group>
           )),
         )}
       </group>
-      <GroundShadow position={[0, 0.008, 0]} size={3} />
+      <GroundShadow position={[0, 0.008, 0]} size={2.6} />
       {truck && (
         <>
-          <Label
-            position={[-0.6, 0.77, -0.4]}
-            rotation={[0, -Math.PI / 2, 0]}
-            text="MOON DELIVERY\nGOOD THINGS IN SMALL BOXES"
-            size={[1.7, 0.55]}
-            background={color}
-            color="#f5e8c9"
-            font={55}
+          <SoftBox
+            position={[0, 0.83, -0.53]}
+            size={[1.16, 0.94, 1.88]}
+            radius={0.08}
+            color="#859a7e"
           />
-          <Box
-            position={[0, 1.16, -0.4]}
-            scale={[1.1, 0.045, 1.8]}
-            color="#d0c2a4"
+          <Label
+            position={[-0.59, 0.88, -0.53]}
+            rotation={[0, -Math.PI / 2, 0]}
+            text="MOON DELIVERY"
+            size={[1.55, 0.3]}
+            font={60}
+            background="#859a7e"
+            color="#f4e8d6"
           />
         </>
       )}
@@ -390,7 +396,7 @@ function DriveCar({ order, index }: { order: Order; index: number }) {
   useFrame((_, dt) => {
     const o = useGame.getState().ops.orders.find((o) => o.id === order.id);
     if (!o || !group.current) return;
-    const target = o.vehicleZ;
+    const target = layout.windowZ - o.vehicleZ;
     group.current.position.z = THREE.MathUtils.damp(
       group.current.position.z,
       target,
@@ -401,8 +407,13 @@ function DriveCar({ order, index }: { order: Order; index: number }) {
   return (
     <group
       ref={group}
-      position={[7.72, -0.3, order.vehicleZ ?? 10 + index * 3.5]}
-      rotation={[0, Math.PI, 0]}
+      name={"drive-car-" + order.id}
+      position={[
+        layout.laneX,
+        -0.15,
+        layout.windowZ - (order.vehicleZ ?? 10 + index * 3.5),
+      ]}
+      rotation={[0, 0, 0]}
     >
       <VehicleModel
         kind={order.vehicle}
@@ -445,39 +456,70 @@ export function Traffic() {
   });
   return (
     <>
-      <group position={[7.72, -0.41, 0]}>
-        <Box scale={[2.65, 0.04, 25]} color="#354d4f" rough={0.19} />
-        {[-1, 1].map((x) => (
+      <group position={[layout.laneX, -0.12, 1.5]}>
+        {[-0.84, 0.84].map((x) => (
           <Box
             key={x}
-            position={[x, 0.035, 0]}
-            scale={[0.035, 0.015, 22]}
-            color="#8e9783"
+            position={[x, 0, 0]}
+            scale={[0.035, 0.015, 15.8]}
+            color="#d4c7a6"
           />
         ))}
-        {[3.5, 7, 10.5].map((z) => (
-          <Box
-            key={z}
-            position={[0, 0.04, z]}
-            scale={[1.3, 0.018, 0.045]}
-            color="#c9bf9e"
-          />
+        {[-4.5, -1.6, 5.2, 8.0].map((z) => (
+          <group key={z} position={[0, 0.025, z]}>
+            <Box scale={[0.05, 0.012, 0.65]} color="#e7d9b9" />
+            {[-1, 1].map((x) => (
+              <Box
+                key={x}
+                position={[x * 0.11, 0, 0.23]}
+                rotation={[0, x * 0.75, 0]}
+                scale={[0.04, 0.013, 0.34]}
+                color="#e7d9b9"
+              />
+            ))}
+          </group>
         ))}
         <Label
-          text="COFFEE TO GO →"
-          position={[0, 0.06, 3.8]}
+          text="DRIVE THRU →"
+          position={[0, 0.04, -3.2]}
           rotation={[-Math.PI / 2, 0, 0]}
-          size={[1.8, 0.48]}
-          font={58}
-          background="#354d4f"
+          size={[1.25, 0.4]}
+          font={64}
+          background="#465965"
+          color="#f4e8d6"
         />
+      </group>
+      <group position={[5.94, 0, -2.45]}>
+        <SoftBox
+          position={[0, 0.79, 0]}
+          size={[0.16, 1.65, 0.19]}
+          radius={0.04}
+          color="#405846"
+        />
+        <SoftBox
+          position={[0, 1.79, 0]}
+          size={[0.22, 0.95, 0.76]}
+          radius={0.08}
+          color="#78917b"
+        />
+        <Label
+          position={[0.12, 1.88, 0]}
+          rotation={[0, Math.PI / 2, 0]}
+          text="ORDER HERE
+COFFEE + COOKIES"
+          size={[0.65, 0.5]}
+          font={68}
+          background="#405846"
+          color="#f4e8d6"
+        />
+        <Ball position={[0.13, 1.5, 0]} scale={0.09} color="#c3b396" />
       </group>
       {orders.map((o, i) => (
         <DriveCar key={o.id} order={o} index={i} />
       ))}
       <group
         ref={truck}
-        position={[-12, -0.32, 7.7]}
+        position={[-12, -0.15, 7.7]}
         rotation={[0, Math.PI / 2, 0]}
         visible={truckStage !== "gone"}
       >
@@ -496,18 +538,18 @@ export function Traffic() {
         </group>
       </group>
       <Box
-        position={[0, -0.4, 7.75]}
-        scale={[25, 0.04, 2.9]}
+        position={[0, -0.19, 7.73]}
+        scale={[14.5, 0.05, 1.35]}
         color="#334a4c"
         rough={0.16}
       />
       <Label
         text="DELIVERIES · THANK YOU"
-        position={[-2, 0.04, 5.45]}
+        position={[-2, -0.11, 6.52]}
         rotation={[-Math.PI / 2, 0, 0]}
         size={[2.7, 0.38]}
         font={62}
-        background="#aead97"
+        background="#969f99"
         color="#456451"
       />
     </>
@@ -520,11 +562,20 @@ export function ServingRobot() {
     items = useGame((s) => s.ops.robot.items);
   const robot = useRef<THREE.Group>(null),
     eyes = useRef<THREE.Group>(null);
-  const point = useMemo(() => new THREE.Vector3(0.55, 0, -0.9), []);
+  useEffect(() => {
+    robot.current?.traverse((o) => {
+      if (o instanceof THREE.Mesh) o.castShadow = false;
+    });
+  }, [level]);
+  const point = useMemo(
+    () => new THREE.Vector3(layout.dock[0], 0, layout.dock[1]),
+    [],
+  );
   useFrame(({ clock }, dt) => {
     if (!robot.current) return;
     const r = useGame.getState().ops.robot;
-    if (r.stage === "idle" || r.route.length < 2) point.set(0.55, 0, -0.9);
+    if (r.stage === "idle" || r.route.length < 2)
+      point.set(layout.dock[0], 0, layout.dock[1]);
     else {
       let travel = r.elapsed * 1.5;
       let last = r.route[0];
@@ -559,11 +610,11 @@ export function ServingRobot() {
         Math.sin(clock.elapsedTime * 0.9) > 0.98 ? 0.18 : 1;
   });
   return level > 0 ? (
-    <group ref={robot} position={[0.55, 0, -0.9]}>
+    <group ref={robot} position={[layout.dock[0], 0, layout.dock[1]]}>
       <Cylinder
         position={[0, 0.19, 0]}
         scale={[0.28, 0.32, 0.28]}
-        color="#d5d7ba"
+        color="#f4e8d6"
       />
       <Cylinder
         position={[0, 0.08, 0]}
@@ -579,10 +630,15 @@ export function ServingRobot() {
           color="#2c3b31"
         />
       ))}
-      <Box position={[0, 0.57, 0]} scale={[0.43, 0.24, 0.27]} color="#849d82" />
+      <SoftBox
+        position={[0, 0.57, 0]}
+        size={[0.5, 0.34, 0.37]}
+        radius={0.13}
+        color="#f4e8d6"
+      />
       <Box
         position={[0, 0.58, 0.145]}
-        scale={[0.35, 0.17, 0.012]}
+        scale={[0.39, 0.18, 0.016]}
         color="#28453a"
       />
       <group ref={eyes}>
@@ -595,6 +651,11 @@ export function ServingRobot() {
           />
         ))}
       </group>
+      <Ball
+        position={[0, 0.6, 0.176]}
+        scale={[0.037, 0.012, 0.005]}
+        color="#a9c98d"
+      />
       {Array.from({ length: level }, (_, i) => (
         <group key={i} position={[0, 0.35 + i * 0.23, -0.05]}>
           <Box scale={[0.5, 0.035, 0.4]} color="#b9c3a1" />
@@ -619,7 +680,7 @@ export function ServingRobot() {
       <GroundShadow position={[0, 0.012, 0]} size={0.8} />
     </group>
   ) : (
-    <group position={[0.55, 0.03, -0.9]}>
+    <group position={[layout.dock[0], 0.03, layout.dock[1]]}>
       <Box scale={[0.65, 0.045, 0.62]} color="#7d937b" />
       <Label
         text="BOMI’S DOCK"

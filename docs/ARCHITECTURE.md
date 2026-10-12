@@ -1,9 +1,10 @@
-# Architecture · version 2
+# Architecture · version 3
 
 React 19 + strict TypeScript provide the interface; Three.js, React Three Fiber and Drei render the world. Zustand stores one authoritative game. Vite builds self-contained browser assets. All graphics and audio are generated locally.
 
 | Module | Responsibility |
 | --- | --- |
+| `src/data/layout.ts` | Shared floor plan, station anchors, seating, shelf slots, vehicle lane and robot routes |
 | `src/data/operations.ts` | Products, supply packs, costs, capacities, timings, station locations |
 | `src/data/content.ts` | Regulars, dialogue, seats, décor, world identity |
 | `src/store/operationTypes.ts` | Physical inventory, carries, receipts, shipments, machine/oven/robot state |
@@ -14,7 +15,8 @@ React 19 + strict TypeScript provide the interface; Three.js, React Three Fiber 
 | `src/game/controls.ts` | Keyboard, pointer lock, shared interaction dispatcher |
 | `src/game/focus.ts` | Prioritize carried products for accepted matching receipts |
 | `src/game/navigation.ts` | Shared collision checks for walking and safe drops |
-| `src/game/Environment.tsx` | Café shell, tables, furnishings, street |
+| `src/game/Environment.tsx` / `Diorama.tsx` | Cutaway architecture, first-person enclosure, furniture, windows, counters and exterior |
+| `src/game/art.tsx` / `SupplyPrint.tsx` | Shared rounded geometry/materials, procedural wood/highlights and illustrated inventory labels |
 | `src/game/OperationsProps.tsx` | Real carried objects, automatic brewer, bakery and stock indicators |
 | `src/game/OperationsWorld.tsx` | Stockroom, boxes, spills, traffic, delivery truck, Bomi |
 | `src/game/Characters.tsx` | Customer movement, shared player motion, Milo, Mochi |
@@ -37,7 +39,7 @@ React 19 + strict TypeScript provide the interface; Three.js, React Three Fiber 
 
 ## Persistence
 
-Storage key remains `after-hours-cafe-v1` to find existing player saves; its payload version is 2. Merge explicitly whitelists values and validates types/ranges instead of spreading arbitrary saved fields into actions. Old bean/milk **portions** transfer into containers and surplus boxes once; money, café identity, ownership, regulars and valid décor remain. Menus reset on reload, while camera preference and active production persist.
+Storage key remains `after-hours-cafe-v1` to find existing player saves; its payload version is 3. Merge explicitly whitelists values and validates types/ranges instead of spreading arbitrary saved fields into actions. Old bean/milk **portions** transfer into containers and surplus boxes once; money, café identity, ownership, regulars and valid décor remain. Menus reset on reload, while camera preference and active production persist.
 
 Writes are throttled and flushed on page exit/visibility change. Saves are local to this browser and origin, with no cloud synchronization. Restricted storage does not crash the game. Hidden tabs stop timers rather than catch up on returning.
 

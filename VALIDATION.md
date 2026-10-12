@@ -1,12 +1,12 @@
-# Validation · 2.0 operations upgrade
+# Validation · 3.0 miniature world
 
 Verified locally in Chrome on Windows, 12 October 2026. Browser reports are in `docs/qa/`.
 
 ## Automated checks
 
 - Strict TypeScript and Vite production build passed.
-- 42 Vitest tests passed: actual stock transfers, repeated brew, insufficient stock, partial/wrong/duplicate orders, deliveries, baking/grace/overflow, drive-through spacing, Bomi reservations and handoffs, upgrades, safe drops, Mochi, bounded credit, menu quotes, closing, reload and old-save migration.
-- Production dependency audit reported zero known vulnerabilities at verification time.
+- 48 Vitest tests passed: actual stock transfers, repeated brew, insufficient stock, partial/wrong/duplicate orders, deliveries, baking/grace/overflow, drive-through spacing, Bomi reservations and handoffs, upgrades, safe drops, Mochi, bounded credit, menu quotes, closing, reload, old-save relocation, seated service, first-person focus, station/shelf/delivery reachability and clear robot routes.
+- Dependency inputs are unchanged from the 2.0 audit, which reported zero known production vulnerabilities. No fresh vulnerability claim is made for 3.0.
 
 ## Browser playthroughs
 
@@ -22,9 +22,13 @@ Verified locally in Chrome on Windows, 12 October 2026. Browser reports are in `
 | Closing and next shift | Close through Manager, inspect report, reload/Continue report without double overhead, begin evening two with cash/stock/upgrades preserved |
 | First-person controls | Real pointer lock and mouse look; E cup pickup, strafe, machine interaction, brewing and collecting; menus release mouse; coffee survives return to diorama |
 
-Development fixtures were used to unlock the bakery early, lower milk for a refill test, fund two equipment purchases, and create known indoor/drive receipts plus display cookies for the service test. The earlier bakery test separately produced those cookies from dough. These are targeted browser checks, not a claim that two natural twelve-minute shifts were played end to end.
+Development fixtures were used to unlock the bakery early, fund two equipment purchases, and create known indoor/drive receipts plus display cookies for the service test. The bakery check separately produced cookies from dough. The extended playthrough resumed browser checkpoints while correcting movement automation and observed issues; these are targeted checks, not a claim that two natural twelve-minute shifts were played end to end. Physical shelf pickup, partial milk refills, the first espresso sale, bakery, prepared robot products, payment, closing and reload exercised the actual controls/store actions.
 
-The compiled build passed an actual espresso sale ($89.62 after its first payment), development-reference/panel exclusion, a 390-pixel supply checkout without horizontal overflow, and reload/Continue preserving cash and the completed order. Final screenshot review also verified the production phone with a 30-pixel status bar and 546-pixel usable scrolling area at 390×844, plus the production first-person camera. Screenshots reflect playable local builds; the first-person showcase uses a camera-position/angle fixture with an actually brewed latte, and the service/bakery/report screenshots include the documented fixtures.
+The compiled build passed an actual espresso sale ($89.62 after its first payment), development-reference/panel exclusion, a 390-pixel supply checkout without horizontal overflow, and reload/Continue preserving cash and the completed order. Its phone measured a 30-pixel status bar and 544-pixel usable scrolling area at 390×844. Both browser runs reported no page errors. See `docs/qa/v3-gameplay.json`, `docs/qa/v3-production.json` and `docs/qa/v3-gallery.json`.
+
+The gallery is captured from the actual 3D game with a documented showcase fixture: funded third shift, equipment/décor, known receipts, waiting car, stocked cookie display and a robot delivery. First-person views use camera-position/angle fixtures; the workstation coffee is actually brewed. Bakery/report captures come from the gameplay checks. Final visual review compares the supplied references with the real seating, kitchen, stockroom, outside car, machinery, characters and cream phone UI. It also corrected cached moving shadows, seated guests returning to their table twice, and driver visibility through the service window.
+
+The extended run recorded 1,213 draw calls, 259,480 triangles, 635 geometries and 43 textures at one development scene snapshot. This is a rendering-cost observation, not a frame-rate benchmark or universal performance claim. Light graphics and adaptive resolution remain available.
 
 ## Manual acceptance checklist
 

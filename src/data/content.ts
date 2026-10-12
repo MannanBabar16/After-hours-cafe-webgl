@@ -1,3 +1,4 @@
+import { layout, tableCenters } from './layout';
 export type RecipeId =
   "espresso" | "latte" | "cappuccino" | "americano" | "flatwhite" | "vanilla";
 export interface RecipeDefinition {
@@ -256,17 +257,10 @@ export const upgrades: UpgradeDefinition[] = [
     earnings: 55,
   },
 ];
-export const seats: [number, number][] = [
-  [3.7, -2.5],
-  [3.7, 0.3],
-  [3.7, 2.8],
-  [-3.7, 1.1],
-  [-3.7, 3.1],
-  [0.1, 3.1],
-];
-export const MACHINE: [number, number, number] = [-1.6, 1.65, -3.05];
-export const COUNTER: [number, number] = [-0.7, -1.8];
-export const DOOR: [number, number] = [5.3, 4.43];
+export const seats: [number, number][] = tableCenters.flatMap(p => [[...p] as [number,number], [...p] as [number,number]]);
+export const MACHINE: [number,number,number] = layout.machine;
+export const COUNTER: [number,number] = [.55,-.65];
+export const DOOR: [number,number] = [-4.85,4.55];
 export const SHIFT_SECONDS = 720;
 export const clockText = (elapsed: number) => {
   const minutes =

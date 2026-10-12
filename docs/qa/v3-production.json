@@ -1,0 +1,14 @@
+{
+  "espresso": {
+    "served": 1,
+    "money": 89.62
+  },
+  "narrowPhone": {
+    "header": 30,
+    "content": 544,
+    "overflow": false
+  },
+  "save": true,
+  "devExcluded": true,
+  "browserErrors": []
+}

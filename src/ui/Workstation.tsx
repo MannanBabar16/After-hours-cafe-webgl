@@ -1,3 +1,4 @@
+import { ProductIcon } from "./ProductIcon";
 import { useGame } from "../store/game";
 import { products, caps } from "../data/operations";
 import { Icon } from "./Icon";
@@ -45,11 +46,8 @@ export function Workstation() {
               s.ops.containers.syrup < products[id].syrup
             }
           >
-            <span
-              className="drink-icon"
-              style={{ background: products[id].color }}
-            >
-              <Icon name="coffee" size={26} />
+            <span className="drink-icon" style={{ background: "#e8dac1" }}>
+              <ProductIcon product={id} size={36} />
             </span>
             <div>
               <b>{products[id].name}</b>

@@ -154,7 +154,11 @@ export function GroundShadow({
   size?: number;
 }) {
   return (
-    <mesh position={position} rotation={[-Math.PI / 2, 0, 0]} renderOrder={1}>
+    <mesh
+      position={[position[0], position[1] + 0.055, position[2]]}
+      rotation={[-Math.PI / 2, 0, 0]}
+      renderOrder={1}
+    >
       <planeGeometry args={[size, size]} />
       <meshBasicMaterial map={shadowTexture} transparent depthWrite={false} />
     </mesh>

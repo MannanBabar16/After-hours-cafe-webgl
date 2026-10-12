@@ -4,7 +4,7 @@ The central mechanic is a connected business: stock arrives, the player makes pr
 
 ## The first evening
 
-Start with $85, a loaded bean hopper, milk tank and cup dispenser, eight dough portions, and reserve boxes on the shelves. Open the café when ready. The first customer requests espresso. Take the order, take a cup, place it, choose the recipe, collect, serve, and hear the till.
+Start with $85, a loaded bean hopper, milk tank and cup dispenser, eight dough portions, and reserve boxes on the shelves. Open the café when ready. The first customer requests espresso. Take the order at the public counter. The guest returns to a seat. Take a cup, place it, choose the recipe, collect, serve the seated guest, and hear the till.
 
 After one lifetime order, drive-through customers become available. After two, cookie production opens. After six, vanilla and flat white join the menu. First-night rewards at two and six orders help the player afford upgrades. Each open shift lasts twelve minutes; accepted orders may finish after closing. Untaken orders leave when closing begins.
 

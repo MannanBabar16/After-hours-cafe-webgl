@@ -1,3 +1,4 @@
+import { shelfSpot } from "../data/layout";
 import type { RecipeId } from "../data/content";
 import type { SupplyId, ProductId, EquipmentId } from "../data/operations";
 export interface ProductItem {
@@ -87,6 +88,7 @@ export interface Transaction {
   time: string;
 }
 export interface Operations {
+  layoutVersion: number;
   containers: Record<SupplyId, number>;
   boxes: SupplyBox[];
   loose: LooseObject[];
@@ -134,14 +136,15 @@ export const emptyOven = (): OvenState => ({
 });
 export function freshOperations(): Operations {
   return {
+    layoutVersion: 2,
     containers: { beans: 10, milk: 8, cups: 10, dough: 8, syrup: 0 },
     boxes: [
       {
         id: 1,
         supply: "beans",
         quantity: 20,
-        x: -8.15,
-        z: -0.75,
+        x: shelfSpot(0)[0],
+        z: shelfSpot(0)[1],
         location: "storage",
         slot: 0,
       },
@@ -149,8 +152,8 @@ export function freshOperations(): Operations {
         id: 2,
         supply: "milk",
         quantity: 12,
-        x: -8.15,
-        z: 0.15,
+        x: shelfSpot(1)[0],
+        z: shelfSpot(1)[1],
         location: "storage",
         slot: 1,
       },
@@ -158,8 +161,8 @@ export function freshOperations(): Operations {
         id: 3,
         supply: "cups",
         quantity: 25,
-        x: -8.15,
-        z: 1.05,
+        x: shelfSpot(2)[0],
+        z: shelfSpot(2)[1],
         location: "storage",
         slot: 2,
       },
@@ -167,8 +170,8 @@ export function freshOperations(): Operations {
         id: 4,
         supply: "dough",
         quantity: 16,
-        x: -8.15,
-        z: 1.95,
+        x: shelfSpot(3)[0],
+        z: shelfSpot(3)[1],
         location: "storage",
         slot: 3,
       },

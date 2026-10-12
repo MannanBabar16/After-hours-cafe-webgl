@@ -1,5 +1,17 @@
 import type { Carry, Order } from "../store/operationTypes";
 
+export function targetFacing(
+  x: number,
+  z: number,
+  yaw: number,
+  target: readonly [number, number, number],
+) {
+  const dx = target[0] - x,
+    dz = target[2] - z,
+    distance = Math.hypot(dx, dz);
+  return distance ? (Math.sin(yaw) * dx + Math.cos(yaw) * dz) / distance : 1;
+}
+
 export function orderFocusBias(order: Order, carry: Carry | null) {
   const items =
     carry?.kind === "product"

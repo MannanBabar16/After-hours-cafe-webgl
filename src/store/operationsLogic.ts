@@ -481,7 +481,7 @@ export function tickOperations(s: GameState, dt: number): Partial<GameState> {
         reset = true;
       }
       if (phase === "receiving" && age > 2) {
-        phase = "findingSeat";
+        phase = "activity";
         reset = true;
       }
       if (phase === "findingSeat" && age > 7) {

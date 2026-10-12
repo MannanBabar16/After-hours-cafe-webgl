@@ -1,0 +1,58 @@
+{
+  "indoor": {
+    "served": 1,
+    "cash": 89.62,
+    "seatedCustomer": true
+  },
+  "upgrade": {
+    "milkCapacity": 16,
+    "stockUnchanged": 8,
+    "robot": true
+  },
+  "resumedFromSavedStockroom": true,
+  "supplies": {
+    "physicalStockroom": true,
+    "delivery": 120,
+    "milk": 16,
+    "boxRemainder": 4
+  },
+  "cameras": {
+    "firstPersonCoffee": true,
+    "mouseLook": true,
+    "menusRelease": true,
+    "sharedCarry": true
+  },
+  "bakery": {
+    "cookies": 4
+  },
+  "robot": {
+    "realLatte": true,
+    "tableDelivery": true
+  },
+  "drivePose": {
+    "x": 6.9,
+    "z": 2.45
+  },
+  "drive": {
+    "partialThenComplete": true,
+    "carDeparted": true
+  },
+  "save": {
+    "secondShift": true,
+    "money": 119.88,
+    "stock": {
+      "beans": 6,
+      "milk": 12,
+      "cups": 6,
+      "dough": 4,
+      "syrup": 0
+    }
+  },
+  "renderer": {
+    "calls": 1213,
+    "triangles": 259480,
+    "geometries": 635,
+    "textures": 43
+  },
+  "browserErrors": []
+}

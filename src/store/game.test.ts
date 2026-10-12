@@ -276,11 +276,11 @@ describe("one connected café business", () => {
     expect(state().carry).toBeNull();
     expect(state().ops.robot.items).toHaveLength(1);
     expect(state().served).toBe(0);
-    advance(5);
+    advance(20);
     expect(state().ops.orders.find((o) => o.id === id)?.paid).toBe(true);
     expect(state().served).toBe(1);
     const cash = state().money;
-    advance(6);
+    advance(20);
     expect(state().money).toBe(cash);
     expect(state().ops.robot.stage).toBe("idle");
   });
@@ -390,7 +390,7 @@ describe("one connected café business", () => {
     state().serve(id);
     expect(state().carry).toEqual(carry);
     expect(state().served).toBe(0);
-    advance(6);
+    advance(20);
     expect(state().served).toBe(1);
   });
   it("robot partial service can be finished manually for one payment", () => {
@@ -402,7 +402,7 @@ describe("one connected café business", () => {
     state().buyEquipment("robot");
     brew();
     state().loadRobot();
-    advance(6);
+    advance(20);
     expect(state().served).toBe(0);
     useGame.setState({
       ops: { ...state().ops, display: { quantity: 1, quality: 1 } },
@@ -411,7 +411,7 @@ describe("one connected café business", () => {
     state().serve(id);
     expect(state().served).toBe(1);
     const cash = state().money;
-    advance(6);
+    advance(20);
     expect(state().money).toBe(cash);
   });
   it("ownership is included in investment spending", () => {
@@ -643,4 +643,13 @@ it("carried coffee prioritizes its accepted receipt over a nearby new guest", ()
   expect(orderFocusBias(accepted, carry)).toBeLessThan(
     orderFocusBias(wrong, carry),
   );
+});
+
+it("a seated guest stays at their table after receiving the completed order", () => {
+  const id = order("indoor", [["espresso", 1]]);
+  brew("espresso");
+  state().serve(id);
+  expect(state().visitors.find((v) => v.uid === id)?.phase).toBe("receiving");
+  advance(2.5);
+  expect(state().visitors.find((v) => v.uid === id)?.phase).toBe("activity");
 });
