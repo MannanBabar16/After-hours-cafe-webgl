@@ -83,6 +83,8 @@ The phone keeps production running. Pause, Help, Settings, and a hidden browser 
 
 ## Setup for contributors
 
+Continuing on a new computer or in a new coding chat? Read [`HANDOFF.md`](HANDOFF.md) for the project goals, preferences, implementation decisions, current release and a ready-to-paste continuation prompt. [`AGENTS.md`](AGENTS.md) directs future Codex sessions to that context.
+
 ```sh
 npm test
 npm run typecheck
