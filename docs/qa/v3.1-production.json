@@ -1,0 +1,9 @@
+{
+  "WASD": true,
+  "arrows": true,
+  "mouseLook": true,
+  "phone": true,
+  "mobileLayout": true,
+  "devExcluded": true,
+  "errors": []
+}

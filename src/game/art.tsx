@@ -4,14 +4,14 @@ import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeom
 import type { ThreeElements } from "@react-three/fiber";
 import { material } from "./primitives";
 export const palette = {
-  sage: "#78917b",
-  forest: "#405846",
-  cream: "#f4e8d6",
-  oak: "#c99a70",
-  terra: "#b97b67",
+  sage: "#79ab82",
+  forest: "#35664f",
+  cream: "#fff0d9",
+  oak: "#dda471",
+  terra: "#d78467",
   coffee: "#624936",
-  pink: "#e4b7ad",
-  light: "#ffd8a1",
+  pink: "#edb1a9",
+  light: "#ffe3ac",
   outside: "#304958",
 };
 const shapes = new Map<string, THREE.BufferGeometry>();
@@ -33,7 +33,7 @@ export function SoftBox({
     const r = Math.min(radius, ...size.map((n) => n * 0.4));
     const key = size.join(":") + ":" + r;
     if (!shapes.has(key))
-      shapes.set(key, new RoundedBoxGeometry(...size, 3, r));
+      shapes.set(key, new RoundedBoxGeometry(...size, 2, r));
     return shapes.get(key)!;
   }, [size[0], size[1], size[2], radius]);
   return (
@@ -51,7 +51,7 @@ const wood = (() => {
   c.width = 128;
   c.height = 512;
   const x = c.getContext("2d")!;
-  x.fillStyle = "#c1a386";
+  x.fillStyle = "#d2a77d";
   x.fillRect(0, 0, 128, 512);
   for (let i = 0; i < 100; i++) {
     x.strokeStyle = i % 3 ? "rgba(95,56,29,.065)" : "rgba(255,229,187,.14)";
@@ -76,7 +76,7 @@ const wood = (() => {
 })();
 export const oakMaterial = new THREE.MeshStandardMaterial({
   map: wood,
-  color: "#fff0db",
+  color: "#fff6e7",
   roughness: 0.76,
 });
 export function Oak({

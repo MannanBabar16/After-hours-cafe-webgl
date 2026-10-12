@@ -2,11 +2,13 @@
 
 <p align="center"><a href="https://after-hours-cafe.upbeat-badge-4829.chatgpt.site"><b>PLAY THE PUBLIC GAME</b></a> · <a href="GAME_DESIGN.md">Design notebook</a> · <a href="docs/ARCHITECTURE.md">Architecture</a> · <a href="VALIDATION.md">Validation</a></p>
 
-# After Hours Café · 3.0
+# After Hours Café · 3.1
 
 **A little café. A real till. One good evening at a time.**
 
 A living miniature café about keeping coffee flowing, baking warm cookies, restocking the bar, and investing your earnings. Warm oak, rounded sage woodwork, cream tiles, arched windows, soft toy characters, and a kitchen-side drive-through give the business its own place. A rainy Korean-inspired diorama becomes a first-person café with one key. Both views share the same player, real items, customers, machines, and money.
+
+The evening now continues beyond your windows: a pastel neighborhood, blossom trees, lit apartments, pedestrians with umbrellas, passing traffic and soft streetlamps. Richer greens, terracotta and golden wood sit under warmer lighting. First-person strafing follows the camera correctly; WASD and arrow keys share the same movement.
 
 [Play online](https://after-hours-cafe.upbeat-badge-4829.chatgpt.site) — public access, no game account required. Saves stay in your browser.
 
@@ -87,7 +89,7 @@ npm run typecheck
 npm run build
 ```
 
-48 meaningful rule, layout, and save tests cover conservation of stock, partial orders, duplicate payment, deliveries, baking, robots, cars, expenses, camera state, closing, migration, station reachability, and clear serving routes. [Validation](VALIDATION.md) describes the browser playthroughs and their fixtures. GitHub Actions is configured for Node 22, locked installation, tests, and a downloadable production artifact; account-level runner availability can affect cloud runs independently of the game.
+53 meaningful rule, layout, and save tests cover conservation of stock, partial orders, duplicate payment, deliveries, baking, robots, cars, expenses, camera state, closing, migration, station reachability, clear serving routes, and camera-relative movement. [Validation](VALIDATION.md) describes the browser playthroughs and their fixtures. GitHub Actions is configured for Node 22, locked installation, tests, and a downloadable production artifact; account-level runner availability can affect cloud runs independently of the game.
 
 Recipes, prices, pack sizes, equipment capacity, and timings are centralized in [`src/data/operations.ts`](src/data/operations.ts). Room coordinates live in [`src/data/layout.ts`](src/data/layout.ts). Personalize the café through the phone; edit the world palette in `src/game/art.tsx` and matching UI in `src/styles/miniature.css`. See [Contributing](CONTRIBUTING.md).
 

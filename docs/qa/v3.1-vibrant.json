@@ -1,0 +1,131 @@
+{
+  "before": {
+    "frame": 111,
+    "calls": 1186,
+    "triangles": 254238,
+    "points": 0,
+    "lines": 0
+  },
+  "after": {
+    "frame": 147,
+    "calls": 799,
+    "triangles": 167052,
+    "points": 0,
+    "lines": 0
+  },
+  "controls": [
+    {
+      "yaw": 0,
+      "key": "d",
+      "distanceAlongCamera": 0.585
+    },
+    {
+      "yaw": 0,
+      "key": "a",
+      "distanceAlongCamera": 0.383
+    },
+    {
+      "yaw": 0,
+      "key": "w",
+      "distanceAlongCamera": 0.593
+    },
+    {
+      "yaw": 0,
+      "key": "s",
+      "distanceAlongCamera": 0.553
+    },
+    {
+      "yaw": 1.5707963267948966,
+      "key": "d",
+      "distanceAlongCamera": 0.697
+    },
+    {
+      "yaw": 1.5707963267948966,
+      "key": "a",
+      "distanceAlongCamera": 0.576
+    },
+    {
+      "yaw": 1.5707963267948966,
+      "key": "w",
+      "distanceAlongCamera": 0.279
+    },
+    {
+      "yaw": 1.5707963267948966,
+      "key": "s",
+      "distanceAlongCamera": 0.87
+    },
+    {
+      "yaw": 3.141592653589793,
+      "key": "d",
+      "distanceAlongCamera": 0.529
+    },
+    {
+      "yaw": 3.141592653589793,
+      "key": "a",
+      "distanceAlongCamera": 0.42
+    },
+    {
+      "yaw": 3.141592653589793,
+      "key": "w",
+      "distanceAlongCamera": 0.795
+    },
+    {
+      "yaw": 3.141592653589793,
+      "key": "s",
+      "distanceAlongCamera": 0.862
+    },
+    {
+      "yaw": -1.5707963267948966,
+      "key": "d",
+      "distanceAlongCamera": 0.84
+    },
+    {
+      "yaw": -1.5707963267948966,
+      "key": "a",
+      "distanceAlongCamera": 0.909
+    },
+    {
+      "yaw": -1.5707963267948966,
+      "key": "w",
+      "distanceAlongCamera": 0.906
+    },
+    {
+      "yaw": -1.5707963267948966,
+      "key": "s",
+      "distanceAlongCamera": 0.956
+    },
+    {
+      "yaw": 0.73,
+      "key": "d",
+      "distanceAlongCamera": 0.68
+    },
+    {
+      "yaw": 0.73,
+      "key": "a",
+      "distanceAlongCamera": 0.607
+    },
+    {
+      "yaw": 0.73,
+      "key": "w",
+      "distanceAlongCamera": 0.41
+    },
+    {
+      "yaw": 0.73,
+      "key": "s",
+      "distanceAlongCamera": 0.6
+    }
+  ],
+  "arrowKeys": true,
+  "mouseLook": true,
+  "phoneReleasesMouse": true,
+  "ambientMotion": true,
+  "reducedMotion": true,
+  "light": {
+    "frame": 990,
+    "calls": 787,
+    "triangles": 163076,
+    "points": 0,
+    "lines": 0
+  },
+  "errors": []
+}

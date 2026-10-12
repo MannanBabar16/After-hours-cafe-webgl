@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import {
@@ -15,6 +15,39 @@ import { useGame } from "../store/game";
 import { walkable } from "./navigation";
 export const isWalkable = (x: number, z: number) =>
   walkable(x, z, useGame.getState().purchased);
+
+const leafGeometry = new THREE.SphereGeometry(1, 10, 6);
+const stemGeometry = new THREE.CylinderGeometry(1, 1, 1, 6);
+function Foliage({ hanging }: { hanging: boolean }) {
+  const leaves = useRef<THREE.InstancedMesh>(null), stems = useRef<THREE.InstancedMesh>(null);
+  const count = hanging ? 18 : 9;
+  useLayoutEffect(() => {
+    const dummy = new THREE.Object3D(), up = new THREE.Vector3(0, 1, 0);
+    for (let i = 0; i < count; i++) {
+      const index = i % 9, tail = i >= 9;
+      const yaw = new THREE.Quaternion().setFromAxisAngle(up, index * 2.4);
+      const base = new THREE.Vector3(0, .37 + (index % 3) * .14, 0);
+      const from = tail ? new THREE.Vector3(.1, .05, 0) : new THREE.Vector3();
+      const to = tail ? new THREE.Vector3(.24, -.2 - (index % 3) * .12, 0) : new THREE.Vector3(.17, .16, 0);
+      const direction = to.clone().sub(from);
+      dummy.position.copy(from.clone().add(to).multiplyScalar(.5).applyQuaternion(yaw).add(base));
+      dummy.quaternion.copy(yaw).multiply(new THREE.Quaternion().setFromUnitVectors(up, direction.clone().normalize()));
+      dummy.scale.set(.01, direction.length(), .01); dummy.updateMatrix(); stems.current!.setMatrixAt(i, dummy.matrix);
+      dummy.position.set(tail ? .23 : .17, tail ? -.17 - (index % 3) * .12 : .14, 0).applyQuaternion(yaw).add(base);
+      dummy.quaternion.copy(yaw).multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1), tail ? 0 : .45));
+      dummy.scale.set(tail ? .105 : .19, .055, tail ? .095 : .11); dummy.updateMatrix(); leaves.current!.setMatrixAt(i, dummy.matrix);
+      leaves.current!.setColorAt(i, new THREE.Color(index % 2 ? "#5aa86c" : "#9ac777"));
+    }
+    leaves.current!.instanceMatrix.needsUpdate = true;
+    leaves.current!.instanceColor!.needsUpdate = true;
+    stems.current!.instanceMatrix.needsUpdate = true;
+    leaves.current!.computeBoundingSphere(); stems.current!.computeBoundingSphere();
+  }, [count]);
+  return <>
+    <instancedMesh ref={leaves} args={[leafGeometry, material("#ffffff", 0, .85), count]} receiveShadow />
+    <instancedMesh ref={stems} args={[stemGeometry, material("#508355"), count]} />
+  </>;
+}
 
 export function Plant({
   position,
@@ -53,41 +86,7 @@ export function Plant({
         color="#5f4633"
       />
       <group ref={leaves}>
-        {Array.from({ length: 9 }, (_, i) => (
-          <group
-            key={i}
-            position={[0, 0.37 + (i % 3) * 0.14, 0]}
-            rotation={[0, i * 2.4, 0]}
-          >
-            <Rod
-              from={[0, 0, 0]}
-              to={[0.17, 0.16, 0]}
-              r={0.012}
-              color="#607548"
-            />
-            <Ball
-              position={[0.17, 0.14, 0]}
-              rotation={[0, 0, 0.45]}
-              scale={[0.19, 0.055, 0.11]}
-              color={i % 2 ? "#6f915e" : "#91a774"}
-            />
-            {hanging && (
-              <group>
-                <Rod
-                  from={[0.1, 0.05, 0]}
-                  to={[0.24, -0.2 - (i % 3) * 0.12, 0]}
-                  r={0.01}
-                  color="#607548"
-                />
-                <Ball
-                  position={[0.23, -0.17 - (i % 3) * 0.12, 0]}
-                  scale={[0.105, 0.05, 0.095]}
-                  color="#88a575"
-                />
-              </group>
-            )}
-          </group>
-        ))}
+        <Foliage hanging={hanging} />
       </group>
       <GroundShadow position={[0, 0.008, 0]} size={0.75} />
     </group>

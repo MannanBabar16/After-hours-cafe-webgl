@@ -1,4 +1,6 @@
 import { studioEnvironment } from "./art";
+import { firstPersonMovement } from "./movement";
+import { Neighborhood, eveningSky } from "./Neighborhood";
 import type { Order } from "../store/operationTypes";
 import { ProductIcon } from "../ui/ProductIcon";
 import { layout, counterSpot, stationVisuals } from "../data/layout";
@@ -127,8 +129,7 @@ function PlayerController() {
     let dx = (h + v) / Math.SQRT2,
       dz = (-h + v) / Math.SQRT2;
     if (s.cameraMode === "first") {
-      dx = Math.cos(view.yaw) * h - Math.sin(view.yaw) * v;
-      dz = -Math.sin(view.yaw) * h - Math.cos(view.yaw) * v;
+      ({ dx, dz } = firstPersonMovement(view.yaw, h, v));
     }
     const norm = Math.hypot(dx, dz);
     m.walking = norm > 0;
@@ -554,10 +555,6 @@ function Atmosphere() {
       heavy,
       0.45 + 0.55 * Math.max(0, 1 - Math.abs(6 - playerMotion.x) / 10),
     );
-    audio.setRain(
-      heavy,
-      0.45 + 0.55 * Math.max(0, 1 - Math.abs(6 - playerMotion.x) / 10),
-    );
     const dt = Math.min(rawDt, 0.05);
     if (rain.current) {
       const count = s.settings.graphics === "low" ? 140 : 320;
@@ -586,19 +583,19 @@ function Atmosphere() {
             : 0.8
           : 1;
       light.current.intensity =
-        (s.phase === "closing" || s.phase === "summary" ? 1.25 : 1.85) *
+        (s.phase === "closing" || s.phase === "summary" ? 1.7 : 2.5) *
         flicker;
     }
   });
   return (
     <>
-      <hemisphereLight args={["#dfcfa8", "#626151", 1.15]} />
-      <ambientLight intensity={0.28} color="#afc4c5" />
+      <hemisphereLight args={["#e5edff", "#ab806b", 1.35]} />
+      <ambientLight intensity={0.15} color="#d8e5ff" />
       <directionalLight
         ref={light}
-        position={[2, 9, 5]}
-        color="#fff0d6"
-        intensity={1.85}
+        position={[-3, 9, 6]}
+        color="#fff1d5"
+        intensity={2.5}
         castShadow
         shadow-autoUpdate={false}
         shadow-needsUpdate
@@ -625,7 +622,7 @@ function Atmosphere() {
         distance={7}
         decay={2}
       />
-      <directionalLight position={[9, 5, -6]} color="#779cac" intensity={0.8} />
+      <directionalLight position={[9, 5, -6]} color="#b0c9ff" intensity={0.65} />
       <instancedMesh
         ref={rain}
         args={[undefined, undefined, 320]}
@@ -778,9 +775,10 @@ function OrderBubbles() {
 }
 function World() {
   const scene = useThree((s) => s.scene);
+  const camera = useThree((s) => s.camera);
   const renderer = useThree((s) => s.gl);
   useEffect(() => {
-    scene.environmentIntensity = 0.24;
+    scene.environmentIntensity = 0.18;
   }, [scene]);
   const visitors = useGame((s) => s.visitors),
     purchased = useGame((s) => s.purchased);
@@ -795,6 +793,7 @@ function World() {
       visitors: visitorMotions,
       view,
       scene,
+      camera,
       renderer: renderer.info,
     };
     return () => {
@@ -809,9 +808,11 @@ function World() {
   return (
     <>
       <primitive attach="environment" object={studioEnvironment} />
+      <primitive attach="background" object={eveningSky} />
       <AdaptiveResolution />
       <CameraRig />
       <Atmosphere />
+      <Neighborhood />
       <Environment />
       <AutoMachine />
       <Bakery />
@@ -840,15 +841,15 @@ export function Scene() {
       gl={{
         antialias: true,
         powerPreference: "high-performance",
-        preserveDrawingBuffer: true,
+        preserveDrawingBuffer: false,
       }}
       onCreated={({ gl }) => {
-        gl.setClearColor("#233740");
-        gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 1.06;
+        gl.setClearColor("#b5a2ba");
+        gl.toneMapping = THREE.NeutralToneMapping;
+        gl.toneMappingExposure = 1.0;
       }}
     >
-      <fog attach="fog" args={["#233740", 55, 95]} />
+      <fog attach="fog" args={["#b5a2ba", 28, 65]} />
       <World />
     </Canvas>
   );

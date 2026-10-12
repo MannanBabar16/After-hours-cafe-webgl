@@ -19,9 +19,15 @@ The coffee machine has a working hopper, visible beans, a connected milk vessel/
 
 Warm pendant and counter lighting contrasts with the cooler wet exterior and rain. A small procedural environment supplies controlled highlights without remote HDR assets. Contact grounding, bounded shadows, reused props, instanced floors/tiles/rain, adaptive DPR and Light graphics control rendering cost.
 
+The 3.1 palette adds richer sage, forest green, terracotta and honey wood. Neutral tone mapping preserves color, warm key lighting establishes depth, and cool fill keeps the shadows readable. A tiny local dusk gradient replaces the solid background. The surroundings are a living pastel neighborhood with blossom trees, lit windows, swaying foliage, passing cars, umbrella walkers and soft billboard lamp glows. These are scenery outside the café's playable boundaries and do not replace drive-through traffic or create business transactions.
+
+The distant town uses five instanced batches with baked face shading, without extra shadow maps or postprocessing. Potted leaves and stems are instanced; rounded props use fewer bevel subdivisions. Light graphics reduces neighborhood trees, walkers and traffic. Ambient neighborhood motion respects the browser's reduced-motion preference. The renderer no longer preserves the drawing buffer unnecessarily.
+
 ## Presentation
 
 The default camera frames the café and outside lane with mild perspective. The mouse wheel offers a small zoom range. Camera-facing walls cut down in the diorama; first person restores full walls and a ceiling. Looking through the nearby pickup window smoothly lowers the eye position to the driver. Both modes use one player and the same inventory/order simulation.
+
+First-person screen-right now follows the rendered camera's right axis. The old strafe basis was mirrored while its forward basis was correct. Unit checks derive the expected axes from a real Three.js camera; browser checks exercise real WASD at five angles, arrow strafing, pointer lock and menu release.
 
 Cream cards, sage keycaps, brown type, illustrated drink/cookie icons, compact order bubbles, and restrained transitions replace the previous dark HUD. Equipment quantities appear contextually instead of permanent floating boards. The five phone apps keep their real transactions, purchases, prices and progression.
 

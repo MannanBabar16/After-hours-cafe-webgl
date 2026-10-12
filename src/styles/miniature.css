@@ -1,16 +1,16 @@
 :root {
   --cream: #f4e8d6;
   --ink: #624936;
-  --sage: #78917b;
-  --sage-light: #92a38a;
+  --sage: #79ab82;
+  --sage-light: #a0bf91;
   --gold: #d7ad70;
-  --forest: #405846;
+  --forest: #35664f;
 }
 .scene-vignette {
   background: radial-gradient(
     ellipse at 50% 44%,
     transparent 45%,
-    #13273133 100%
+    #79648618 100%
   );
   pointer-events: none;
 }

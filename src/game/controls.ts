@@ -80,10 +80,12 @@ export function interact() {
 }
 export function useControls() {
   useEffect(() => {
+    const aliases: Record<string, string> = { arrowup: "w", arrowdown: "s", arrowleft: "a", arrowright: "d" };
+    const movementKey = (key: string) => aliases[key.toLowerCase()] ?? key.toLowerCase();
     const down = (event: KeyboardEvent) => {
       if ((event.target as HTMLElement)?.matches("input,textarea,select"))
         return;
-      const key = event.key.toLowerCase();
+      const key = movementKey(event.key);
       if (
         [
           "w",
@@ -144,7 +146,7 @@ export function useControls() {
       }
       audio.update(s.settings);
     };
-    const up = (event: KeyboardEvent) => keys.delete(event.key.toLowerCase());
+    const up = (event: KeyboardEvent) => keys.delete(movementKey(event.key));
     const blur = () => {
       keys.clear();
     };

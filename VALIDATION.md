@@ -1,11 +1,24 @@
-# Validation · 3.0 miniature world
+# Validation · 3.1 vibrant evening and first-person controls
 
 Verified locally in Chrome on Windows, 12 October 2026. Browser reports are in `docs/qa/`.
+
+## 3.1 verification
+
+- All 53 tests and strict TypeScript / production build passed. Five new camera-derived tests cover WASD at cardinal and diagonal viewing angles.
+- Real browser keyboard checks exercised W/A/S/D at five camera angles, checking travel against the rendered camera matrix, plus arrow strafing, trusted mouse movement, pointer lock and phone release.
+- The new neighborhood's cars and walkers moved over time, stopped under the browser's reduced-motion preference, and rendered successfully with Light graphics.
+- The compiled release separately passed real WASD and arrow movement, mouse look, phone pointer release and a 390-pixel phone layout without overflow or page errors. Development controls remain excluded from production. Its storage-based observations wait for the existing 900 ms save flush rather than reading stale positions.
+- A controlled comparison loaded the exact 3.0 commit and 3.1 in separate localhost origins, at 1366×768 with fresh closed cafés, the same camera and High graphics. After warm-up, the median draw-call sample of eight frames was 1,186 → 799; triangles were 254,238 → 167,052. That is approximately 33% fewer draw calls and 34% fewer triangles including the neighborhood. This measures rendering work, not FPS or universal device performance.
+- The new run reported no page errors. The final gallery was captured from the real 3D game at 1600×900 using the previously documented showcase fixtures. See `docs/qa/v3.1-vibrant.json`, `docs/qa/v3.1-production.json` and `docs/qa/v3.1-gallery.json`.
+
+The new scenery uses small local procedural textures and five instanced scenery batches, without postprocessing or additional shadow maps. Instanced café foliage and fewer bevel subdivisions reduce foreground rendering work. The existing café simulation, economy and save format are unchanged by this visual/control update.
+
+## Prior 3.0 gameplay verification
 
 ## Automated checks
 
 - Strict TypeScript and Vite production build passed.
-- 48 Vitest tests passed: actual stock transfers, repeated brew, insufficient stock, partial/wrong/duplicate orders, deliveries, baking/grace/overflow, drive-through spacing, Bomi reservations and handoffs, upgrades, safe drops, Mochi, bounded credit, menu quotes, closing, reload, old-save relocation, seated service, first-person focus, station/shelf/delivery reachability and clear robot routes.
+- 48 Vitest tests passed before the 3.1 camera tests were added: actual stock transfers, repeated brew, insufficient stock, partial/wrong/duplicate orders, deliveries, baking/grace/overflow, drive-through spacing, Bomi reservations and handoffs, upgrades, safe drops, Mochi, bounded credit, menu quotes, closing, reload, old-save relocation, seated service, first-person focus, station/shelf/delivery reachability and clear robot routes.
 - Dependency inputs are unchanged from the 2.0 audit, which reported zero known production vulnerabilities. No fresh vulnerability claim is made for 3.0.
 
 ## Browser playthroughs
