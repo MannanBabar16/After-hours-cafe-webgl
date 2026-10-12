@@ -1,0 +1,14 @@
+{
+  "desktopPhone": {
+    "statusBarHeight": 30
+  },
+  "narrowPhone": {
+    "width": 390,
+    "checkoutUsable": true,
+    "horizontalOverflow": false,
+    "header": 30,
+    "content": 546
+  },
+  "productionCamera": true,
+  "browserErrors": []
+}

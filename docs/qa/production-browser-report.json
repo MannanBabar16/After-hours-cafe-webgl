@@ -1,0 +1,13 @@
+{
+  "productionCoffee": {
+    "served": 1,
+    "cash": 89.62,
+    "devControlsAbsent": true
+  },
+  "narrowPhone": {
+    "width": 390,
+    "checkoutUsable": true
+  },
+  "productionSave": true,
+  "browserErrors": []
+}

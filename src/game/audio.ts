@@ -17,7 +17,10 @@ type Foley =
   | "cloth"
   | "footstep"
   | "distribute"
-  | "paper";
+  | "paper"
+  | "engine"
+  | "refill"
+  | "oven";
 class CafeAudio {
   private context?: AudioContext;
   private master?: GainNode;
@@ -91,10 +94,10 @@ class CafeAudio {
       0.1,
     );
   }
-  setRain(heavy: boolean) {
+  setRain(heavy: boolean, proximity = 1) {
     if (this.context)
       this.ambience?.gain.setTargetAtTime(
-        heavy ? 0.19 : 0.11,
+        (heavy ? 0.19 : 0.11) * proximity,
         this.context.currentTime,
         1,
       );
@@ -254,6 +257,9 @@ class CafeAudio {
       footstep: [0.1, 180, 0.09],
       distribute: [0.4, 1100, 0.08],
       paper: [0.3, 1400, 0.1],
+      engine: [1.2, 125, 0.075],
+      refill: [0.9, 700, 0.1],
+      oven: [0.3, 260, 0.06],
     };
     if (foley[sound]) {
       this.noise(...foley[sound]!);

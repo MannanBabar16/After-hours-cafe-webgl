@@ -1,39 +1,18 @@
 # Working on After Hours Café
 
-Use Node.js 22.12 or newer. With nvm, run `nvm use`; on Windows, use `nvm install 22` and `nvm use 22` if you use nvm-windows. No environment variables or API keys are needed to play or develop.
+Use Node.js 22.12 or newer. No API keys or environment variables are needed.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Keep changes focused on one player experience. Open a feature issue for larger mechanics so progression and UI complexity can be discussed before implementation.
+Run `npm test`, `npm run typecheck`, and `npm run build` before submitting changes. Play the affected flow with `npm run preview` so production behavior is checked too. Include a desktop screenshot and narrow-layout check for UI changes.
 
-## Before a pull request
+Protect actual game invariants: conservation of box/container quantities, no stock creation on upgrade, partial receipts paid once, robot reservations, quoted menu prices, quality discounts, and overhead applied once. Persistence changes should check old saves, malformed values, active production, and a second evening. Avoid tests that merely mirror UI labels.
 
-```sh
-npm test
-npm run build
-npm run preview
-```
+The backtick development panel changes the real simulation and offers stock, money, indoor/drive customers, bakery, current oven completion, rain, equipment, camera and closing fixtures. It is excluded from production. Fixtures shorten a targeted test; record them when reporting a browser playthrough.
 
-Play the affected flow in the compiled preview. UI changes should include a screenshot at a desktop size and a narrow layout check. For financial changes, check cash, ingredient cost, waste, and repeated clicks. For persistence changes, check a reload and an older save with missing fields.
+See [Architecture](docs/ARCHITECTURE.md), [Game design](GAME_DESIGN.md), and [Validation](VALIDATION.md). Central balancing data is in `src/data/operations.ts`. Preserve one shared player, inventory, order service, and till across both cameras and customer channels.
 
-Tests should protect meaningful game rules. Practice must remain free and paused; goal rewards and closing charges must happen once; menu price changes must preserve existing quotes. Prefer changing the rule in `src/game/` or the store before adding presentation logic.
-
-## Where to work
-
-See [Architecture](docs/ARCHITECTURE.md) for the module map. [Game design](GAME_DESIGN.md) explains the learning and pacing decisions. [Validation](VALIDATION.md) records the browser checks and current limitations.
-
-## Useful commands
-
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Local development with hot reload |
-| `npm run typecheck` | Strict TypeScript check |
-| `npm test` | Game-rule regression tests |
-| `npm run test:watch` | Rerun tests while editing |
-| `npm run build` | Typecheck and create `dist/` |
-| `npm run preview` | Serve the compiled build locally |
-
-GitHub Actions runs the tests and production build on main and pull requests. Successful runs include a downloadable `after-hours-cafe-webgl` build artifact. Extract it and serve the directory over HTTP to play; opening the HTML as a local file will not load the module graph correctly.
+GitHub Actions installs locked dependencies, tests game rules, builds, and uploads `dist/`. Account-level Actions restrictions can prevent a cloud job from starting even when these commands pass locally. Serve a downloaded production artifact over HTTP to play.

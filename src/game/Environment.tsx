@@ -10,35 +10,14 @@ import {
   Cup,
   GroundShadow,
 } from "./primitives";
+import { walkable } from "./navigation";
 import { seats } from "../data/content";
 import { useGame } from "../store/game";
 
-export const obstacles = [
-  { x: -1.8, z: -3.1, w: 7.1, d: 1.2 },
-  ...seats.map(([x, z]) => ({ x, z, w: 1.1, d: 1.1 })),
-  { x: -5.25, z: -0.65, w: 0.65, d: 1.3 },
-];
 export function isWalkable(x: number, z: number) {
-  if (x < -5.5 || x > 5.5 || z < -2.2 || z > 4.05) return false;
-  const purchased = useGame.getState().purchased;
-  if (
-    purchased.includes("sofa") &&
-    Math.abs(x + 2.25) < 1.25 &&
-    Math.abs(z - 3.58) < 0.71
-  )
-    return false;
-  if (
-    purchased.includes("bookshelf") &&
-    Math.abs(x + 5.65) < 0.49 &&
-    Math.abs(z - 1.05) < 1.1
-  )
-    return false;
-  return !obstacles.some(
-    (o) =>
-      Math.abs(x - o.x) < o.w / 2 + 0.24 && Math.abs(z - o.z) < o.d / 2 + 0.24,
-  );
+  return walkable(x, z, useGame.getState().purchased);
 }
-function Plant({
+export function Plant({
   position,
   scale = 1,
 }: {
@@ -80,7 +59,7 @@ function Plant({
     </group>
   );
 }
-function Chair({
+export function Chair({
   position,
   rotation = 0,
   color = "#829273",
@@ -111,7 +90,7 @@ function Chair({
     </group>
   );
 }
-function Table({
+export function Table({
   position,
   upgrade = false,
 }: {
@@ -153,7 +132,7 @@ function Table({
     </group>
   );
 }
-function Pendant({ position }: { position: [number, number, number] }) {
+export function Pendant({ position }: { position: [number, number, number] }) {
   return (
     <group position={position}>
       <Cylinder
@@ -173,7 +152,7 @@ function Pendant({ position }: { position: [number, number, number] }) {
     </group>
   );
 }
-function Floor() {
+export function Floor() {
   const planks = useRef<THREE.InstancedMesh>(null);
   const wood = useMemo(() => {
     const canvas = document.createElement("canvas");
@@ -252,7 +231,11 @@ function Floor() {
     </>
   );
 }
-function Bookshelf({ position }: { position: [number, number, number] }) {
+export function Bookshelf({
+  position,
+}: {
+  position: [number, number, number];
+}) {
   const bookColors = ["#987255", "#849278", "#e0c895", "#8d9d9d", "#ad7d6e"];
   return (
     <group position={position} rotation={[0, Math.PI / 2, 0]}>
@@ -372,92 +355,26 @@ export const Environment = memo(function Environment() {
       <Box
         position={[-1.7, 0.67, -3.15]}
         scale={[7.5, 1.3, 1.1]}
-        color="#a67750"
+        color="#5f7868"
       />
       {Array.from({ length: 18 }, (_, i) => (
         <Box
           key={i}
           position={[-5.3 + i * 0.43, 0.66, -2.585]}
           scale={[0.025, 1.18, 0.025]}
-          color="#775335"
+          color="#43594a"
           shadow={false}
         />
       ))}
       <Box
         position={[-1.7, 1.36, -3.15]}
         scale={[7.75, 0.15, 1.32]}
-        color="#dad1b6"
+        color="#c3956c"
       />
       <Box
         position={[-1.7, 1.44, -3.15]}
         scale={[7.78, 0.015, 1.36]}
-        color="#efe5cf"
-      />
-      <Box
-        position={[-4.25, 1.59, -3.14]}
-        scale={[1.25, 0.26, 0.77]}
-        color="#705744"
-      />
-      <mesh position={[-4.25, 1.88, -3.14]}>
-        <boxGeometry args={[1.3, 0.58, 0.8]} />
-        <meshPhysicalMaterial
-          color="#dbe7de"
-          transmission={0}
-          transparent
-          opacity={0.18}
-          roughness={0.12}
-          depthWrite={false}
-        />
-      </mesh>
-      <Box
-        position={[-4.25, 2.18, -3.14]}
-        scale={[1.3, 0.045, 0.8]}
-        color="#c1a579"
-        metal={0.25}
-      />
-      {[-4.55, -4.25, -3.95].map((x, i) => (
-        <group key={x}>
-          <Cylinder
-            position={[x, 1.75, -3.08]}
-            scale={[0.12, 0.07, 0.12]}
-            color={i === 1 ? "#c19352" : "#b77840"}
-          />
-          <Ball
-            position={[x, 1.8, -3.08]}
-            scale={[0.12, 0.07, 0.1]}
-            color="#dca665"
-          />
-        </group>
-      ))}
-      <Label
-        text={"BAKED WITH LOVE"}
-        position={[-4.25, 1.6, -2.735]}
-        size={[0.96, 0.14]}
-        font={38}
-        background="#705744"
-      />
-      <Box
-        position={[0.25, 1.6, -3.25]}
-        scale={[0.48, 0.32, 0.5]}
-        color="#434e43"
-      />
-      <Cylinder
-        position={[0.25, 1.95, -3.25]}
-        scale={[0.2, 0.4, 0.2]}
-        color="#7f674c"
-      />
-      <Cone
-        position={[0.25, 2.16, -3.25]}
-        scale={[0.18, 0.1, 0.18]}
-        color="#333b35"
-      />
-      <Label
-        text={"MENU\nESPRESSO 4 · LATTE 6"}
-        position={[1.06, 1.86, -3.17]}
-        size={[0.82, 0.55]}
-        rotation={[-0.12, 0, 0]}
-        font={48}
-        background="#394b3f"
+        color="#d6ae80"
       />
       <Box
         position={[-3.45, 2.32, -4.3]}
@@ -520,7 +437,7 @@ export const Environment = memo(function Environment() {
           color="#516358"
         />
       ))}
-      {[-2.93, 0, 2.94].map((z) => (
+      {[-2.93, 2.94].map((z) => (
         <mesh key={z} position={[6, 2.02, z]} rotation={[0, Math.PI / 2, 0]}>
           <planeGeometry args={[2.79, 2.5]} />
           <meshStandardMaterial

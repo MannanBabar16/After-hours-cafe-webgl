@@ -1,5 +1,5 @@
 export type RecipeId =
-  "espresso" | "latte" | "cappuccino" | "americano" | "flatwhite";
+  "espresso" | "latte" | "cappuccino" | "americano" | "flatwhite" | "vanilla";
 export interface RecipeDefinition {
   id: RecipeId;
   name: string;
@@ -10,6 +10,15 @@ export interface RecipeDefinition {
   color: string;
 }
 export const recipes: RecipeDefinition[] = [
+  {
+    id: "vanilla",
+    name: "Vanilla latte",
+    price: 7.5,
+    note: "A soft vanilla finish.",
+    milk: true,
+    foam: false,
+    color: "#ddbc8f",
+  },
   {
     id: "espresso",
     name: "Espresso",

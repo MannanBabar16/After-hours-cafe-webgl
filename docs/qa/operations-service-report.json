@@ -1,0 +1,21 @@
+{
+  "upgrades": {
+    "milkCapacity": 16,
+    "milkStock": 8,
+    "robotCapacity": 1
+  },
+  "robotDelivery": true,
+  "driveThrough": {
+    "partialThenFull": true,
+    "cookiesUsed": 2,
+    "carDeparted": true
+  },
+  "saveAndSecondShift": {
+    "shift": 2,
+    "money": 120.25,
+    "milk": 6,
+    "robot": 1,
+    "milkLevel": 1
+  },
+  "browserErrors": []
+}

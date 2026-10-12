@@ -1,0 +1,16 @@
+{
+  "firstCoffee": {
+    "served": 1,
+    "money": 89.62,
+    "beans": 9,
+    "cups": 9
+  },
+  "cameraAndCarry": true,
+  "deliveryBox": 113,
+  "refill": {
+    "milk": 8,
+    "boxLeft": 6
+  },
+  "cookieBatch": 4,
+  "browserErrors": []
+}

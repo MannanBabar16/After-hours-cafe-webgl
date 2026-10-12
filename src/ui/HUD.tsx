@@ -1,267 +1,279 @@
+import { useEffect, useState } from "react";
 import { useGame } from "../store/game";
-import { customerById, recipeById, clockText } from "../data/content";
+import {
+  useFocus,
+  keys,
+  interact,
+  capturePointer,
+  releasePointer,
+} from "../game/controls";
+import { products, supplyCatalog, moneyText } from "../data/operations";
+import { customerById, clockText } from "../data/content";
+import { totalOrder, itemsInHand } from "../store/operationsLogic";
 import { Icon } from "./Icon";
-import { audio } from "../game/audio";
-import { keys, interact } from "../game/controls";
-import { level, shiftProfit } from "../game/business";
+
 export function HUD() {
-  const s = useGame();
-  const orders = s.visitors.filter(
-    (v) => !v.paid && ["ordering", "waiting"].includes(v.phase),
+  const s = useGame(),
+    focus = useFocus((s) => s.focus),
+    [locked, setLocked] = useState(!!document.pointerLockElement);
+  useEffect(() => {
+    const update = () => setLocked(!!document.pointerLockElement);
+    document.addEventListener("pointerlockchange", update);
+    return () => document.removeEventListener("pointerlockchange", update);
+  }, []);
+  const active = s.ops.orders.filter(
+    (o) => !o.paid && (o.channel === "indoor" || o.vehiclePhase === "waiting"),
   );
-  const hint =
-    s.served === 0
-      ? "Your first little ritual"
-      : s.purchased.length === 0
-        ? "Make it feel like home"
-        : s.lifetimeEarned < 30
-          ? "Get to know your people"
-          : !s.purchased.includes("mochi")
-            ? "A tiny helping hand"
-            : "A place that knows your name";
-  const detail =
-    s.served === 0
-      ? "Make an espresso, then take it to your guest."
-      : s.purchased.length === 0
-        ? "Open your phone and bring home your first decoration."
-        : s.lifetimeEarned < 30
-          ? "Good coffee turns new faces into familiar ones."
-          : !s.purchased.includes("mochi")
-            ? "Mochi is waiting in your phone’s shop."
-            : "Keep the coffee flowing. Enjoy the rain.";
+  const box =
+    s.carry?.kind === "box"
+      ? s.ops.boxes.find((b) => b.id === (s.carry as { boxId: number }).boxId)
+      : undefined;
+  const carryLabel = box
+    ? `${supplyCatalog[box.supply].name} · ${box.quantity} ${supplyCatalog[box.supply].unit}`
+    : s.carry?.kind === "cup"
+      ? "Empty paper cup"
+      : s.carry?.kind === "bakingTray"
+        ? `${s.carry.quantity} ${s.carry.baked ? "warm cookies" : "dough portions"} · baking tray`
+        : s.carry?.kind === "trash"
+          ? s.carry.label
+          : s.carry?.kind === "tray"
+            ? `Serving tray · ${s.carry.items.length} item${s.carry.items.length === 1 ? "" : "s"}`
+            : s.carry?.kind === "product"
+              ? products[s.carry.item.product].name
+              : "";
+  const quest =
+    !s.ops.open && s.phase !== "closing"
+      ? "Prepare, then open your café."
+      : s.business.lifetimeServed === 0
+        ? "Take an order at the counter. A cup is waiting on the left."
+        : s.business.lifetimeServed === 1
+          ? "A first regular. Try a delivery, or answer the drive-through."
+          : s.business.lifetimeServed < 4
+            ? "The bakery is yours now. Bake a small batch while coffee brews."
+            : s.ops.levels.robot === 0
+              ? "Choose an upgrade that makes your next evening easier."
+              : "A capable little café. Find your own rhythm.";
   return (
-    <div className="hud">
-      <header className="hud-header">
+    <>
+      <header className="operations-top">
         <div className="cafe-brand">
-          <span>
-            <Icon name="coffee" size={23} />
+          <span className="brand-mark">
+            <Icon name="coffee" size={24} />
           </span>
           <div>
-            <b>{s.business.name}</b>
-            <small>EVENING {String(s.shift).padStart(2, "0")}</small>
+            <h1>{s.business.name}</h1>
+            <small>
+              EVENING {String(s.shift).padStart(2, "0")} <i />{" "}
+              {s.phase === "closing"
+                ? "LAST ORDERS"
+                : s.ops.open
+                  ? "OPEN · WELCOME IN"
+                  : "PREPARING THE CAFÉ"}
+            </small>
           </div>
         </div>
-        <div className="hud-stats">
-          <div className="hud-time">
-            <Icon name="moon" size={18} />
-            <b>{clockText(s.elapsed)}</b>
-            <span>
-              <Icon name="rain" size={14} />{" "}
-              {s.event === "rain" ? "Heavy rain" : "Light rain"}
-            </span>
+        <div className="top-details">
+          <div>
+            <b>
+              <Icon name="moon" />
+              {clockText(s.elapsed)}
+            </b>
+            <small>
+              <Icon name="rain" size={13} />
+              {s.event === "rain"
+                ? "Rain at the windows"
+                : "A soft rainy evening"}
+            </small>
           </div>
-          <div className="hud-money">
-            <span>IN THE TILL</span>
-            <b>${s.money.toFixed(2)}</b>
+          <div className="till">
+            <small>IN YOUR TILL</small>
+            <strong>{moneyText(s.money)}</strong>
           </div>
           <button
-            className="icon-button"
-            aria-label="Open settings"
-            onClick={() => useGame.setState({ settingsOpen: true })}
+            className="hud-round"
+            aria-label="Settings"
+            onClick={() => {
+              releasePointer();
+              useGame.setState({ settingsOpen: true });
+            }}
           >
             <Icon name="settings" />
           </button>
         </div>
       </header>
-      {!s.workstation && (
-        <>
-          <section className="orders" aria-label="Customer orders">
-            {orders.length > 0 && (
-              <span className="eyebrow">
-                A LITTLE SOMETHING WARM · {orders.length}
-              </span>
-            )}
-            {orders.map((v) => {
-              const customer = customerById(v.id);
-              const ready = s.tray?.recipe === v.recipe;
-              return (
-                <div
-                  key={v.uid}
-                  className={`order-card ${ready ? "ready" : ""}`}
-                >
-                  <span
-                    className="avatar"
-                    style={{ background: customer.palette }}
-                  >
-                    {customer.name[0]}
-                  </span>
-                  <div>
-                    <span>
-                      {customer.name}
-                      {(s.familiarity[v.id] ?? 0) >= 3 && (
-                        <Icon name="heart" size={10} />
-                      )}
-                    </span>
-                    <b>
-                      {!v.accepted ? "The usual?" : recipeById(v.recipe).name}
-                      {v.pastry ? " + croissant" : ""}
-                    </b>
-                  </div>
-                  <span className="order-status">
-                    {ready ? (
-                      <Icon name="check" size={16} />
-                    ) : (
-                      <Icon name="coffee" size={17} />
-                    )}
-                  </span>
-                </div>
-              );
-            })}
-          </section>
-          {s.tray && (
-            <div className="tray-card">
-              <div>
-                <Icon name="coffee" size={22} />
-                <span>
-                  <small>ON YOUR TRAY</small>
-                  <b>
-                    {recipeById(s.tray.recipe).name}
-                    <em>
-                      {s.tray.quality === "perfect" ? " · made perfectly" : ""}
-                    </em>
-                  </b>
-                </span>
+      {!s.phone && !s.workstation && (
+        <aside className="operations-orders">
+          <div className="tiny-heading">
+            A LITTLE SOMETHING WARM <span>{active.length} ORDERS</span>
+          </div>
+          {active.slice(0, 4).map((order) => (
+            <article className={`order-ticket ${order.channel}`} key={order.id}>
+              <div className="ticket-name">
+                <Icon
+                  name={order.channel === "drive" ? "car" : "users"}
+                  size={16}
+                />
+                <b>
+                  {order.channel === "drive"
+                    ? `Drive-through · ${order.customer}`
+                    : customerById(order.customer).name}
+                </b>
+                <small>{order.accepted ? "TAKEN" : "E TO TAKE"}</small>
               </div>
-              <button
-                className="text-button"
-                onClick={() => {
-                  useGame.setState({ tray: null });
-                  s.notify(
-                    "For the house",
-                    "A little coffee for you. Your tray is ready again.",
-                  );
-                  audio.play("cup");
-                }}
-              >
-                Set aside
-              </button>
-            </div>
-          )}
-          <div className="journey-hint">
-            <span className="hint-line" />
-            <div>
-              <span className="eyebrow">{hint}</span>
-              <p>{detail}</p>
-            </div>
-          </div>
-          <div className="business-strip">
-            <span>LV {level(s.business.xp)}</span>
-            <b>{s.served} cups served</b>
-            <span
-              className={
-                shiftProfit(s.revenue, s.business) >= 0 ? "profitable" : ""
-              }
-            >
-              ${shiftProfit(s.revenue, s.business).toFixed(2)} profit
-            </span>
-            <button
-              onClick={() =>
-                useGame.setState({
-                  managementOpen: true,
-                  managementTab: "today",
-                })
-              }
-            >
-              <Icon name="store" size={15} /> Café desk <kbd>R</kbd>
-            </button>
-          </div>
-          <div className="hud-footer">
-            <div className="control-hints">
-              <span>
-                <kbd>WASD</kbd> Move
-              </span>
-              <span>
-                <kbd>E</kbd> Interact
-              </span>
-              <button onClick={() => s.togglePhone()}>
-                <kbd>F</kbd> Phone
-              </button>
-              <span>
-                <kbd>Esc</kbd> Pause
-              </span>
-            </div>
-            <div className="footer-actions">
-              <button
-                className="ambience-toggle"
-                onClick={() => {
-                  if (s.settings.master > 0) s.updateSettings({ master: 0 });
-                  else {
-                    void audio.start();
-                    s.updateSettings({ master: 0.65 });
+              {order.lines.map((line) => (
+                <div
+                  key={line.product}
+                  className={
+                    line.delivered === line.quantity
+                      ? "fulfilled"
+                      : "ticket-item"
                   }
-                }}
-                aria-label={s.settings.master ? "Mute sound" : "Enable sound"}
-              >
-                <Icon name={s.settings.master ? "sound" : "mute"} size={16} />
-                <span>Rain & soft keys</span>
-              </button>
-              <button
-                className="icon-button"
-                aria-label="How to play"
-                onClick={() => useGame.setState({ help: true })}
-              >
-                <Icon name="help" size={17} />
-              </button>
-              <button
-                className="phone-shortcut"
-                onClick={() => s.togglePhone()}
-              >
-                <Icon name="phone" size={17} />
-                <span>{s.followers} followers</span>
-              </button>
-            </div>
-          </div>
-          <div className="touch-controls">
-            {["w", "a", "s", "d"].map((k) => (
-              <button
-                key={k}
-                onPointerDown={(e) => {
-                  e.currentTarget.setPointerCapture(e.pointerId);
-                  keys.add(k);
-                }}
-                onPointerUp={() => keys.delete(k)}
-                onPointerCancel={() => keys.delete(k)}
-              >
-                {k === "w" ? "↑" : k === "a" ? "←" : k === "s" ? "↓" : "→"}
-              </button>
-            ))}
-            <button onClick={interact}>E</button>
-          </div>
-        </>
+                >
+                  <Icon
+                    name={line.product === "cookie" ? "cookie" : "coffee"}
+                    size={16}
+                  />
+                  <span>{products[line.product].name}</span>
+                  <b>{line.quantity - line.delivered || "✓"}</b>
+                </div>
+              ))}
+              <footer>
+                <span>
+                  {order.accepted
+                    ? "Pay after all items"
+                    : "Waiting comfortably"}
+                </span>
+                <b>{moneyText(totalOrder(order))}</b>
+              </footer>
+            </article>
+          ))}
+        </aside>
       )}
-      {s.phase === "closing" && (
-        <div className="closing-notice">
-          <Icon name="moon" />
-          <span>One last goodnight.</span>
-          <small>The café is closing.</small>
+      <div className="shift-note">
+        <div>
+          <b>{s.served} orders served</b>
+          <span>
+            {moneyText(s.revenue - s.ops.ingredientCost - s.ops.overhead)}{" "}
+            operating profit
+          </span>
+        </div>
+        <p>{quest}</p>
+        {!s.ops.open && s.phase === "playing" && (
+          <button className="secondary-button compact" onClick={s.openCafe}>
+            <Icon name="store" size={15} /> Open the café
+          </button>
+        )}
+        {s.phase === "closing" && (
+          <small>Finish accepted orders to review your shift.</small>
+        )}
+      </div>
+      {s.carry && (
+        <div className="carry-chip">
+          <Icon
+            name={
+              s.carry.kind === "box"
+                ? "box"
+                : s.carry.kind === "trash"
+                  ? "trash"
+                  : s.carry.kind === "bakingTray"
+                    ? "cookie"
+                    : s.carry.kind === "tray"
+                      ? "tray"
+                      : "coffee"
+            }
+            size={18}
+          />
+          <span>{carryLabel}</span>
+          <kbd>G</kbd>
+          <small>PUT DOWN</small>
+          {itemsInHand(s.carry).length > 1 && (
+            <b>{itemsInHand(s.carry).length}</b>
+          )}
         </div>
       )}
-    </div>
+      {s.cameraMode === "first" && !s.phone && !s.workstation && (
+        <>
+          <div className="first-crosshair" />
+          {!locked && !s.paused && !s.settingsOpen && (
+            <button
+              className="look-button"
+              onClick={() => void capturePointer()}
+            >
+              Click to look around <span>V returns to the diorama</span>
+            </button>
+          )}
+          {focus && (
+            <button className="first-interact" onClick={interact}>
+              <kbd>E</kbd>
+              {focus.label}
+            </button>
+          )}
+        </>
+      )}
+      <footer className="operations-controls">
+        <span>
+          <kbd>WASD</kbd> Walk
+        </span>
+        <span>
+          <kbd>E</kbd> Interact
+        </span>
+        <button
+          onClick={() => {
+            s.toggleCamera();
+            if (s.cameraMode === "isometric") void capturePointer();
+            else releasePointer();
+          }}
+        >
+          <kbd>V</kbd>
+          {s.cameraMode === "first" ? "First person" : "Diorama"}
+        </button>
+        <button
+          onClick={() => {
+            releasePointer();
+            s.togglePhone();
+          }}
+        >
+          <kbd>F</kbd> Phone
+        </button>
+        <button onClick={() => useGame.setState({ paused: true })}>
+          <kbd>Esc</kbd> Pause
+        </button>
+      </footer>
+      <div className="touch-movement">
+        {["w", "a", "s", "d"].map((key) => (
+          <button
+            key={key}
+            aria-label={`Walk ${key}`}
+            onPointerDown={() => keys.add(key)}
+            onPointerUp={() => keys.delete(key)}
+            onPointerLeave={() => keys.delete(key)}
+          >
+            {key === "w" ? "↑" : key === "a" ? "←" : key === "s" ? "↓" : "→"}
+          </button>
+        ))}
+        <button onClick={interact}>E</button>
+      </div>
+    </>
   );
 }
 export function Notifications() {
   const toasts = useGame((s) => s.toasts);
   return (
-    <div className="notifications" aria-live="polite">
+    <div className="notifications">
       {toasts.map((t) => (
-        <div
-          key={t.id}
-          className={`notification ${t.type} ${t.age > 5.7 ? "leaving" : ""}`}
-        >
-          <span className="notification-icon">
-            <Icon
-              name={
-                t.type === "social"
-                  ? "camera"
-                  : t.type === "money"
-                    ? "bank"
-                    : t.type === "upgrade"
-                      ? "sparkle"
-                      : "coffee"
-              }
-              size={18}
-            />
-          </span>
+        <div key={t.id} className={`notification ${t.type}`}>
+          <Icon
+            name={
+              t.type === "money"
+                ? "bank"
+                : t.type === "upgrade"
+                  ? "sparkle"
+                  : t.type === "social"
+                    ? "heart"
+                    : "coffee"
+            }
+            size={18}
+          />
           <div>
             <b>{t.title}</b>
             <p>{t.detail}</p>

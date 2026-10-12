@@ -30,6 +30,15 @@ import {
   RotateCcw,
   Users,
   Star,
+  Milk,
+  Cookie,
+  Package,
+  Car,
+  Truck,
+  Layers,
+  Trash2,
+  Hand,
+  Gauge,
 } from "lucide-react";
 const icons = {
   coffee: Coffee,
@@ -64,6 +73,17 @@ const icons = {
   reset: RotateCcw,
   users: Users,
   star: Star,
+  milk: Milk,
+  cookie: Cookie,
+  box: Package,
+  car: Car,
+  truck: Truck,
+  tray: Layers,
+  trash: Trash2,
+  hand: Hand,
+  gauge: Gauge,
+  cup: Coffee,
+  syrup: Milk,
 };
 export function Icon({
   name,

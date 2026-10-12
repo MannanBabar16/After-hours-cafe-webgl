@@ -43,7 +43,11 @@ export function Person({
   const rightArm = useRef<THREE.Group>(null);
   const leftLeg = useRef<THREE.Group>(null);
   const rightLeg = useRef<THREE.Group>(null);
-  const tray = useGame((s) => (player ? s.tray : null));
+  const carried = useGame((s) => (player ? s.carry : null));
+  const tray =
+    carried?.kind === "product" && carried.item.product !== "cookie"
+      ? { recipe: carried.item.product, art: "heart" as const }
+      : null;
   const apron = useGame((s) => (player ? s.business.apron : "#415d47"));
   const cupColor = useGame((s) => s.business.cup);
   const trayGroup = useRef<THREE.Group>(null);
@@ -80,7 +84,7 @@ export function Person({
     serveAnimation.current = Math.max(0, serveAnimation.current - dt);
     const lowering = serveAnimation.current > 0;
     if (trayGroup.current) {
-      trayGroup.current.visible = carrying || lowering;
+      trayGroup.current.visible = false;
       trayGroup.current.position.y =
         0.1 - (lowering ? (1 - serveAnimation.current / 0.65) * 0.19 : 0);
       trayGroup.current.scale.setScalar(
@@ -243,14 +247,20 @@ export function Person({
 export function VisitorActor({ visitor }: { visitor: Visitor }) {
   const cupColor = useGame((s) => s.business.cup);
   const def = customerById(visitor.id);
-  const seated = ["waiting", "receiving", "sitting", "activity"].includes(
-    visitor.phase,
-  );
+  const seated = ["sitting", "activity"].includes(visitor.phase);
   const table = seats[visitor.seat] ?? seats[0];
   const motion = useRef<ActorMotion>(
     visitorMotions.get(visitor.uid) ?? {
-      x: seated ? table[0] : DOOR[0],
-      z: seated ? table[1] + 0.97 : DOOR[1],
+      x: seated
+        ? table[0]
+        : visitor.phase === "entering"
+          ? DOOR[0]
+          : 1.7 + (visitor.uid % 3) * 0.38,
+      z: seated
+        ? table[1] + 0.97
+        : visitor.phase === "entering"
+          ? DOOR[1]
+          : -1.45 + (visitor.uid % 3) * 0.3,
       angle: Math.PI,
       walking: !seated,
     },
@@ -267,7 +277,12 @@ export function VisitorActor({ visitor }: { visitor: Visitor }) {
         [1.7, -1.4],
       ];
     else if (visitor.phase === "queueing") path = [[1.7, -1.4]];
-    else if (visitor.phase === "ordering")
+    else if (visitor.phase === "ordering" || visitor.phase === "waiting")
+      path = [
+        [1.7, -1.45],
+        [1.7 + (visitor.uid % 3) * 0.38, -1.45 + (visitor.uid % 3) * 0.3],
+      ];
+    else if (visitor.phase === "findingSeat")
       path =
         table[0] > 2
           ? [
@@ -304,7 +319,7 @@ export function VisitorActor({ visitor }: { visitor: Visitor }) {
       useGame.getState().settingsOpen ||
       useGame.getState().help ||
       useGame.getState().managementOpen ||
-      useGame.getState().brew.practice
+      useGame.getState().phase === "title"
     ) {
       m.walking = false;
       return;
@@ -387,6 +402,7 @@ export function VisitorActor({ visitor }: { visitor: Visitor }) {
     </>
   );
 }
+export const miloMotion = { x: 5.25, y: 0.12, z: 1.5 };
 export const Milo = memo(function Milo() {
   const purchased = useGame((s) => s.purchased);
   const cat = useRef<THREE.Group>(null);
@@ -421,6 +437,11 @@ export const Milo = memo(function Milo() {
       dt,
     );
     cat.current.position.y = spot[1] + 0.12 + Math.sin(t * 1.6) * 0.008;
+    Object.assign(miloMotion, {
+      x: cat.current.position.x,
+      y: cat.current.position.y,
+      z: cat.current.position.z,
+    });
     cat.current.scale.y =
       1 + (t % 22 > 20 ? Math.sin(((t % 22) - 20) * Math.PI) * 0.22 : 0);
     if (tail.current) tail.current.rotation.y = Math.sin(t * 1.5) * 0.18;
@@ -475,38 +496,6 @@ export const Milo = memo(function Milo() {
     </group>
   );
 });
-const dirtSpots: [[number, number], [number, number], [number, number]] = [
-  [-1, 1],
-  [1, 2.3],
-  [1.6, -0.5],
-];
-function Dirt() {
-  const dirt = useRef<THREE.Group>(null);
-  useFrame(({ clock }) => {
-    if (dirt.current) {
-      const n = Math.floor(clock.elapsedTime / 17) % 3;
-      dirt.current.position.set(dirtSpots[n][0], 0.064, dirtSpots[n][1]);
-      dirt.current.scale.setScalar(
-        clock.elapsedTime % 17 > 13
-          ? Math.max(0, (17 - (clock.elapsedTime % 17)) / 4)
-          : 1,
-      );
-    }
-  });
-  return (
-    <group ref={dirt}>
-      {Array.from({ length: 5 }, (_, i) => (
-        <Ball
-          key={i}
-          position={[Math.cos(i) * 0.17, 0, Math.sin(i) * 0.14]}
-          scale={[0.044, 0.004, 0.027]}
-          color="#6b503c"
-          shadow={false}
-        />
-      ))}
-    </group>
-  );
-}
 export const Mochi = memo(function Mochi() {
   const group = useRef<THREE.Group>(null);
   const eyes = useRef<THREE.Group>(null);
@@ -520,34 +509,33 @@ export const Mochi = memo(function Mochi() {
   useFrame(({ clock }, dt) => {
     if (!group.current) return;
     const t = clock.elapsedTime;
-    const period = Math.floor(t / 17);
-    const cleaning = t % 17 > 13;
-    const stuck = t % 53 > 49;
-    const spot = stuck ? [-2.69, 1.1] : dirtSpots[period % 3];
+    const ops = useGame.getState().ops;
+    const spill = ops.spills[0];
+    const period = spill?.id ?? -1;
+    const cleaning = !!spill && ops.cleaningTimer > 9;
+    const spot = spill ? [spill.x, spill.z] : [-4.8, 2.0];
     group.current.position.x = THREE.MathUtils.damp(
       group.current.position.x,
       spot[0],
-      stuck ? 1.5 : 0.45,
+      1.2,
       dt,
     );
     group.current.position.z = THREE.MathUtils.damp(
       group.current.position.z,
       spot[1],
-      stuck ? 1.5 : 0.45,
+      1.2,
       dt,
     );
-    group.current.rotation.y = stuck
-      ? Math.sin(t * 18) * 0.18
-      : Math.atan2(
-          spot[0] - group.current.position.x,
-          spot[1] - group.current.position.z,
-        );
+    group.current.rotation.y = Math.atan2(
+      spot[0] - group.current.position.x,
+      spot[1] - group.current.position.z,
+    );
     if (eyes.current) eyes.current.scale.y = t % 7 > 6.8 ? 0.16 : 1;
     if (sparkle.current) {
       sparkle.current.visible = cleaning;
       sparkle.current.rotation.y = t;
     }
-    if ((cleaning || stuck) && lastTone.current !== period) {
+    if (cleaning && lastTone.current !== period) {
       lastTone.current = period;
       audio.play("robot");
     }
@@ -589,7 +577,6 @@ export const Mochi = memo(function Mochi() {
           ))}
         </group>
       </group>
-      <Dirt />
     </>
   );
 });

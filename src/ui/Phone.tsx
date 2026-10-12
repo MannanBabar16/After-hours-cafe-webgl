@@ -1,419 +1,509 @@
-import { useEffect, useState } from "react";
-import { useGame, styleScores, familiarityLabel } from "../store/game";
-import { customers, customerById, upgrades, clockText } from "../data/content";
+import { useState } from "react";
+import { useGame, familiarityLabel } from "../store/game";
+import {
+  supplyCatalog,
+  supplyIds,
+  equipment,
+  equipmentIds,
+  caps,
+  products,
+  moneyText,
+} from "../data/operations";
+import type { SupplyId, ProductId } from "../data/operations";
+import { customers, upgrades, customerById } from "../data/content";
 import { Icon } from "./Icon";
 import type { IconName } from "./Icon";
-import { audio } from "../game/audio";
-import { shiftProfit } from "../game/business";
-const apps: { name: "CafeGram" | "Bank" | "Café" | "Shop"; icon: IconName }[] =
-  [
-    { name: "CafeGram", icon: "camera" },
-    { name: "Bank", icon: "bank" },
-    { name: "Café", icon: "store" },
-    { name: "Shop", icon: "shop" },
-  ];
-export function Phone() {
-  const open = useGame((s) => s.phone);
-  const app = useGame((s) => s.phoneApp);
-  const time = useGame((s) => s.elapsed);
-  const [snapshot, setSnapshot] = useState("");
-  useEffect(() => {
-    if (!open) return;
-    try {
-      const source = document.querySelector("canvas");
-      if (!source) return;
-      const target = document.createElement("canvas");
-      target.width = 560;
-      target.height = 350;
-      target.getContext("2d")?.drawImage(source, 0, 0, 560, 350);
-      setSnapshot(target.toDataURL("image/jpeg", 0.8));
-    } catch {
-      /* Snapshots are decorative; social posts stay readable. */
-    }
-  }, [open]);
-  return (
-    <aside
-      className={`phone ${open ? "is-open" : ""}`}
-      aria-label="Player phone"
-      aria-hidden={!open}
-      inert={!open}
-    >
-      <div className="phone-hardware">
-        <div className="phone-notch" />
-        <div className="phone-status">
-          <span>{clockText(time).split(" ")[0]}</span>
-          <span>••• ▰</span>
-        </div>
-        <div className="phone-heading">
-          <span className="eyebrow">YOUR LITTLE WORLD</span>
-          <button
-            className="icon-button"
-            aria-label="Close phone"
-            onClick={() => useGame.getState().togglePhone()}
-          >
-            <Icon name="close" />
-          </button>
-        </div>
-        <nav className="phone-apps" aria-label="Phone apps">
-          {apps.map((a) => (
-            <button
-              key={a.name}
-              className={app === a.name ? "active" : ""}
-              onClick={() => {
-                useGame.setState({ phoneApp: a.name });
-                audio.play("click");
-              }}
-            >
-              <Icon name={a.icon} />
-              <span>{a.name}</span>
-            </button>
-          ))}
-        </nav>
-        <div className="phone-body">
-          {app === "CafeGram" ? (
-            <CafeGram snapshot={snapshot} />
-          ) : app === "Bank" ? (
-            <Bank />
-          ) : app === "Café" ? (
-            <CafeStats />
-          ) : (
-            <Shop />
-          )}
-        </div>
-        <div className="phone-home" />
-      </div>
-    </aside>
+
+const apps = [
+  { id: "Supply", label: "Supply shop", icon: "box", color: "#dde7d7" },
+  { id: "Equipment", label: "Equipment", icon: "gauge", color: "#eadbc0" },
+  { id: "Bank", label: "Your bank", icon: "bank", color: "#d7e2e1" },
+  { id: "Café", label: "Café manager", icon: "store", color: "#e5dacc" },
+  { id: "CafeGram", label: "CafeGram", icon: "heart", color: "#e9d5cc" },
+] as const;
+function SupplyShop() {
+  const s = useGame(),
+    [cart, setCart] = useState<Partial<Record<SupplyId, number>>>({});
+  const total = supplyIds.reduce(
+    (sum, id) => sum + (cart[id] ?? 0) * supplyCatalog[id].price,
+    0,
   );
-}
-function CafeGram({ snapshot }: { snapshot: string }) {
-  const posts = useGame((s) => s.posts);
-  const followers = useGame((s) => s.followers);
-  const [liked, setLiked] = useState<number[]>([]);
   return (
     <>
-      <div className="app-title">
-        <h2>
-          CafeGram<span>✦</span>
-        </h2>
-        <p>A little corner of the internet.</p>
+      <div className="phone-intro">
+        <span>MOON DELIVERY</span>
+        <h3>Good things, in small boxes.</h3>
+        <p>
+          Order now. Carry the boxes inside, then refill the equipment yourself.
+        </p>
       </div>
-      <div className="social-profile">
-        <div className="brand-avatar">
-          <Icon name="coffee" size={25} />
+      {supplyIds.map((id) => {
+        const p = supplyCatalog[id];
+        return (
+          <article className="supply-row" key={id}>
+            <div className="pack-icon" style={{ background: p.color }}>
+              <Icon name={p.icon as IconName} size={24} />
+            </div>
+            <div>
+              <b>{p.name}</b>
+              <small>
+                {p.pack} {p.unit} · {moneyText(p.price)}
+              </small>
+            </div>
+            <div className="quantity-picker">
+              <button
+                aria-label={`Remove ${p.name}`}
+                onClick={() =>
+                  setCart({ ...cart, [id]: Math.max(0, (cart[id] ?? 0) - 1) })
+                }
+              >
+                −
+              </button>
+              <span>{cart[id] ?? 0}</span>
+              <button
+                aria-label={`Add ${p.name}`}
+                onClick={() =>
+                  setCart({ ...cart, [id]: Math.min(5, (cart[id] ?? 0) + 1) })
+                }
+              >
+                +
+              </button>
+            </div>
+          </article>
+        );
+      })}
+      <button
+        className="primary-button full-width checkout"
+        disabled={!total}
+        onClick={() => {
+          const before = s.ops.shipments.length;
+          s.orderSupplies(cart);
+          if (useGame.getState().ops.shipments.length > before) setCart({});
+        }}
+      >
+        <Icon name="truck" size={18} /> Order delivery <b>{moneyText(total)}</b>
+      </button>
+      {s.ops.shipments.length > 0 && (
+        <div className="delivery-card">
+          <Icon name="truck" />
+          <div>
+            <b>
+              {s.ops.truck.stage === "parked"
+                ? "Truck outside · boxes ready"
+                : "Your delivery is on its way"}
+            </b>
+            <p>
+              {s.ops.shipments
+                .map((sh) =>
+                  sh.items
+                    .map((i) => `${i.packs} ${supplyCatalog[i.supply].name}`)
+                    .join(" · "),
+                )
+                .join(" / ")}
+            </p>
+          </div>
         </div>
-        <div>
-          <b>@afterhours.cafe</b>
-          <span>{followers.toLocaleString()} followers · open late</span>
-        </div>
-      </div>
-      {!posts.length ? (
-        <div className="phone-empty">
-          <Icon name="camera" size={34} />
-          <h3>The first page is yours.</h3>
-          <p>
-            Serve a little comfort. Your customers will share the moments they
-            love.
-          </p>
-        </div>
-      ) : (
-        posts.map((post) => {
-          const customer = customerById(post.customer);
-          const heart = liked.includes(post.id);
-          return (
-            <article className="social-post" key={post.id}>
-              <div className="post-author">
-                <span
-                  className="avatar"
-                  style={{ background: customer.palette }}
-                >
-                  {customer.name[0]}
-                </span>
-                <div>
-                  <b>@{customer.handle}</b>
-                  <span>{post.time} · After Hours Café</span>
-                </div>
-                <span className="post-dots">···</span>
-              </div>
-              <div className={`post-photo ${post.theme}`}>
-                {snapshot && (
-                  <img
-                    src={snapshot}
-                    alt="A snapshot of the warm café on a rainy evening"
-                  />
-                )}
-                <span>
-                  <Icon
-                    name={
-                      post.theme === "cat"
-                        ? "heart"
-                        : post.theme === "rain"
-                          ? "rain"
-                          : "coffee"
-                    }
-                    size={15}
-                  />{" "}
-                  {post.theme === "cat"
-                    ? "Milo’s corner"
-                    : post.theme === "rain"
-                      ? "Rainy night rituals"
-                      : "Made with care"}
-                </span>
-              </div>
-              <div className="post-like">
-                <button
-                  aria-label={heart ? "Unlike post" : "Like post"}
-                  className={heart ? "liked" : ""}
-                  onClick={() => {
-                    setLiked(
-                      heart
-                        ? liked.filter((id) => id !== post.id)
-                        : [...liked, post.id],
-                    );
-                    audio.play("click");
-                  }}
-                >
-                  <Icon name="heart" />
-                </button>
-                <b>{(post.likes + (heart ? 1 : 0)).toLocaleString()} likes</b>
-              </div>
-              <p>{post.text}</p>
-            </article>
-          );
-        })
       )}
+      <p className="phone-footnote">
+        No instant stock. The truck takes about 12 seconds to arrive. Small
+        emergency orders can use supplier credit when a key container is empty.
+      </p>
+    </>
+  );
+}
+function EquipmentShop() {
+  const s = useGame();
+  return (
+    <>
+      <div className="phone-intro">
+        <span>A LITTLE MORE CAPABLE</span>
+        <h3>Make the work your own.</h3>
+        <p>
+          Every upgrade changes your equipment. Capacity never adds free
+          ingredients.
+        </p>
+      </div>
+      {equipmentIds.map((id) => {
+        const p = equipment[id],
+          level = s.ops.levels[id],
+          price = p.prices[level];
+        return (
+          <article key={id} className="equipment-row">
+            <div>
+              <Icon name={p.icon as IconName} size={23} />
+              <div>
+                <b>{p.name}</b>
+                <small>
+                  {caps(s.ops.levels, id)} {p.unit}
+                  {price !== undefined
+                    ? ` → ${p.values[level + 1]} ${p.unit}`
+                    : " · fully upgraded"}
+                </small>
+              </div>
+            </div>
+            <p>{p.detail}</p>
+            <button
+              className="secondary-button compact"
+              disabled={price === undefined || s.money < (price ?? 0)}
+              onClick={() => s.buyEquipment(id)}
+            >
+              {price === undefined ? (
+                <>
+                  <Icon name="check" size={14} /> Yours
+                </>
+              ) : (
+                <>
+                  Upgrade <b>{moneyText(price)}</b>
+                </>
+              )}
+            </button>
+          </article>
+        );
+      })}
     </>
   );
 }
 function Bank() {
-  const business = useGame((s) => s.business);
-  const money = useGame((s) => s.money);
-  const revenue = useGame((s) => s.revenue);
-  const lifetime = useGame((s) => s.lifetimeEarned);
-  const purchased = useGame((s) => s.purchased);
-  const shift = useGame((s) => s.shift);
-  const spent = upgrades
-    .filter((u) => purchased.includes(u.id))
-    .reduce((sum, u) => sum + u.price, 0);
+  const s = useGame();
   return (
     <>
-      <div className="app-title">
-        <h2>Your balance</h2>
-        <p>Little cups. Bigger dreams.</p>
-      </div>
-      <div className="bank-card">
-        <span>AFTER HOURS · BUSINESS ACCOUNT</span>
-        <h3>${money.toFixed(2)}</h3>
+      <div className="bank-hero">
+        <span>YOUR WORK, ADDING UP</span>
+        <strong>{moneyText(s.money)}</strong>
         <small>Available balance</small>
-        <Icon name="coffee" size={28} />
       </div>
-      <div className="stat-pair">
+      <div className="bank-grid">
         <div>
-          <span>Tonight’s income</span>
-          <b>+${revenue.toFixed(2)}</b>
+          <span>Orders & tips</span>
+          <b>{moneyText(s.revenue)}</b>
         </div>
         <div>
-          <span>All-time income</span>
-          <b>${lifetime.toFixed(2)}</b>
+          <span>Supply purchases</span>
+          <b>−{moneyText(s.ops.supplySpend)}</b>
+        </div>
+        <div>
+          <span>Equipment & décor</span>
+          <b>−{moneyText(s.ops.upgradeSpend)}</b>
+        </div>
+        <div>
+          <span>Cash from trading</span>
+          <b>
+            {moneyText(
+              s.revenue -
+                s.ops.supplySpend -
+                s.ops.upgradeSpend -
+                s.ops.overhead,
+            )}
+          </b>
         </div>
       </div>
-      <div className="ownership-card">
-        <Icon name="store" />
-        <span className="eyebrow">ONE DAY, ALL YOURS</span>
-        <h3>{business.owned ? "The keys are yours." : "Own your café"}</h3>
-        <p>
-          {business.owned
-            ? "No more rent. Only $3 utilities per evening."
-            : "A $500 dream. Keep your profits, then buy the keys."}
-        </p>
-        <div className="progress">
-          <i style={{ width: `${Math.min(100, (money / 500) * 100)}%` }} />
-        </div>
+      <div className="profit-note">
         <b>
-          ${money.toFixed(0)} <span>/ $500</span>
+          {moneyText(s.revenue - s.ops.ingredientCost - s.ops.overhead)}{" "}
+          operating profit
         </b>
+        <p>
+          Sales less ingredients used and shift costs. Buying unopened stock
+          changes cash first; it becomes an ingredient cost when used.
+        </p>
       </div>
-      {!business.owned && (
-        <button
-          className="primary-button compact"
-          disabled={money < 500}
-          onClick={() => useGame.getState().buyCafe()}
-        >
-          Buy the café · $500
-        </button>
-      )}
-      <div className="stat-pair">
-        <div>
-          <span>Operating profit</span>
-          <b>${shiftProfit(revenue, business).toFixed(2)}</b>
-        </div>
-        <div>
-          <span>Ingredients used</span>
-          <b>${business.ingredientCost.toFixed(2)}</b>
-        </div>
-      </div>
-      <button
-        className="secondary-button compact"
-        onClick={() =>
-          useGame.setState({
-            phone: false,
-            managementOpen: true,
-            managementTab: "today",
-          })
-        }
-      >
-        Open the business desk
-      </button>
-      <h4 className="small-heading">YOUR LEDGER</h4>
-      <div className="ledger-row">
-        <Icon name="coffee" />
-        <div>
-          <b>Evening {shift}</b>
-          <small>Coffee & little thank-you tips</small>
-        </div>
-        <strong>+${revenue.toFixed(2)}</strong>
-      </div>
-      <div className="ledger-row">
-        <Icon name="shop" />
-        <div>
-          <b>Making it yours</b>
-          <small>Furniture & upgrades, all time</small>
-        </div>
-        <strong>−${spent.toFixed(2)}</strong>
-      </div>
-    </>
-  );
-}
-function CafeStats() {
-  const reputation = useGame((s) => s.reputation);
-  const served = useGame((s) => s.served);
-  const purchased = useGame((s) => s.purchased);
-  const familiarity = useGame((s) => s.familiarity);
-  const styles = styleScores(purchased);
-  return (
-    <>
-      <div className="app-title">
-        <h2>Our little café</h2>
-        <p>Make coffee. Build a place. Know your people.</p>
-      </div>
-      <div className="cafe-stat-banner">
-        <div>
-          <Icon name="star" />
-          <b>{reputation}</b>
-          <span>Reputation / 100</span>
-        </div>
-        <div>
-          <Icon name="users" />
-          <b>{served}</b>
-          <span>Served tonight</span>
-        </div>
-      </div>
-      <h4 className="small-heading">THE FEEL OF THE PLACE</h4>
-      <div className="styles">
-        {Object.entries(styles).map(([style, value]) => (
-          <div key={style}>
-            <span>{style}</span>
-            <div className="progress">
-              <i style={{ width: `${Math.min(100, value)}%` }} />
-            </div>
-            <b>{value}</b>
-          </div>
-        ))}
-      </div>
-      <h4 className="small-heading">YOUR PEOPLE</h4>
-      <div className="regulars">
-        {customers.map((c) => (
-          <div className="regular-row" key={c.id}>
-            <span className="avatar" style={{ background: c.palette }}>
-              {c.name[0]}
-            </span>
+      <h4>Recent transactions</h4>
+      {s.ops.transactions.length ? (
+        s.ops.transactions.map((t) => (
+          <div className="transaction" key={t.id}>
             <div>
-              <b>{c.name}</b>
-              <small>{c.tag}</small>
+              <b>{t.label}</b>
+              <small>
+                {t.time} · {t.kind}
+              </small>
             </div>
-            <span
-              className={`familiarity ${(familiarity[c.id] ?? 0) >= 3 ? "regular" : ""}`}
-            >
-              {familiarityLabel(familiarity[c.id] ?? 0)}
-            </span>
+            <strong className={t.amount >= 0 ? "positive" : ""}>
+              {t.amount >= 0 ? "+" : ""}
+              {moneyText(t.amount)}
+            </strong>
           </div>
-        ))}
-      </div>
+        ))
+      ) : (
+        <p className="empty-note">
+          Your first customer will make the first entry.
+        </p>
+      )}
     </>
   );
 }
-function Shop() {
-  const money = useGame((s) => s.money);
-  const purchased = useGame((s) => s.purchased);
-  const earned = useGame((s) => s.lifetimeEarned);
-  const [category, setCategory] = useState("All");
+function Manager() {
+  const s = useGame();
   return (
     <>
-      <div className="app-title">
-        <h2>A place of your own</h2>
-        <p>Small changes. A little more you.</p>
+      <div className="phone-intro">
+        <span>YOUR CAFÉ / EVENING {s.shift}</span>
+        <h3>A place with your name on it.</h3>
+        <p>
+          {s.event === "rain"
+            ? "Rain brings the study crowd in."
+            : s.event === "viral"
+              ? "CafeGram is bringing a few more visitors."
+              : "A gentle evening: indoor tables and coffee to go."}
+        </p>
       </div>
-      <div className="shop-balance">
-        <Icon name="bank" />
-        <span>${money.toFixed(2)} available</span>
+      <div className="manager-metrics">
+        <span>
+          <b>{s.served}</b> orders served
+        </span>
+        <span>
+          <b>{Math.round(s.reputation)}</b> reputation
+        </span>
+        <span>
+          <b>{s.followers}</b> followers
+        </span>
       </div>
-      <div className="shop-filters">
-        {["All", "Décor", "Company"].map((label) => (
+      <h4>Tonight’s menu</h4>
+      {[
+        ...s.unlocked,
+        ...(s.business.lifetimeServed >= 2 ? ["cookie" as const] : []),
+      ].map((id) => (
+        <label className="price-row" key={id}>
+          <span>
+            <Icon name={id === "cookie" ? "cookie" : "coffee"} size={16} />
+            {products[id].name}
+          </span>
+          <span>
+            $
+            <input
+              aria-label={`${products[id].name} price`}
+              type="number"
+              min="1"
+              max="12"
+              step=".5"
+              value={s.ops.menuPrices[id] ?? products[id].price}
+              onChange={(e) =>
+                s.setMenuPrice(id as ProductId, Number(e.target.value))
+              }
+            />
+          </span>
+        </label>
+      ))}
+      <p className="phone-footnote">
+        Prices are quoted when orders arrive. Existing orders keep their
+        original price.
+      </p>
+      <h4>Equipment at a glance</h4>
+      <div className="equipment-levels">
+        {[
+          ["Beans", s.ops.containers.beans, caps(s.ops.levels, "hopper")],
+          ["Milk", s.ops.containers.milk, caps(s.ops.levels, "milkTank")],
+          ["Cups", s.ops.containers.cups, caps(s.ops.levels, "cupDispenser")],
+          ["Dough", s.ops.containers.dough, 24],
+          ["Cookies", s.ops.display.quantity, caps(s.ops.levels, "display")],
+        ].map(([name, amount, max]) => (
+          <div key={name}>
+            <span>{name}</span>
+            <b>
+              {amount}/{max}
+            </b>
+            <i style={{ width: `${(Number(amount) / Number(max)) * 100}%` }} />
+          </div>
+        ))}
+      </div>
+      <h4>Make it yours</h4>
+      <label className="custom-name">
+        <span>Café name</span>
+        <input
+          maxLength={28}
+          value={s.business.name}
+          onChange={(e) => s.setBusiness({ name: e.target.value })}
+        />
+      </label>
+      <div className="custom-colors">
+        {(["apron", "cup"] as const).map((key) => (
+          <label key={key}>
+            {key === "apron" ? "Apron" : "Cup sleeve"}
+            <input
+              type="color"
+              value={s.business[key]}
+              onChange={(e) => s.setBusiness({ [key]: e.target.value })}
+            />
+          </label>
+        ))}
+      </div>
+      <div className="segmented">
+        {(["sage", "rose", "midnight"] as const).map((theme) => (
           <button
-            key={label}
-            className={category === label ? "active" : ""}
-            onClick={() => setCategory(label)}
+            key={theme}
+            className={s.business.theme === theme ? "active" : ""}
+            onClick={() => s.setBusiness({ theme })}
           >
-            {label}
+            {theme}
           </button>
         ))}
       </div>
-      <div className="shop-grid">
-        {upgrades
-          .filter(
-            (u) =>
-              category === "All" ||
-              (category === "Company" ? u.id === "mochi" : u.id !== "mochi"),
-          )
-          .map((u) => {
-            const owned = purchased.includes(u.id);
-            const locked = !!u.earnings && earned < u.earnings;
-            return (
-              <article
-                className={`shop-item ${owned ? "owned" : ""}`}
-                key={u.id}
-              >
-                <div className={`shop-illustration ${u.icon}`}>
-                  <Icon name={u.icon as IconName} size={34} />
-                  {owned && (
-                    <span>
-                      <Icon name="check" size={13} />
-                    </span>
-                  )}
-                </div>
-                <h3>{u.name}</h3>
-                <p>{u.description}</p>
-                <span className="style-tag">
-                  +{u.points} {u.style}
-                </span>
-                <button
-                  disabled={owned || locked || money < u.price}
-                  onClick={() => useGame.getState().buy(u.id)}
-                >
-                  {owned ? (
-                    <>
-                      <Icon name="check" size={13} /> At home
-                    </>
-                  ) : locked ? (
-                    `Earn $${u.earnings} to unlock`
-                  ) : (
-                    `$${u.price} · Bring home`
-                  )}
-                </button>
-              </article>
-            );
-          })}
+      <h4>Little additions</h4>
+      {upgrades
+        .filter((u) => u.id !== "machine")
+        .map((u) => (
+          <div className="decor-row" key={u.id}>
+            <Icon name={u.icon as IconName} />
+            <div>
+              <b>{u.name}</b>
+              <small>{u.description}</small>
+            </div>
+            <button
+              disabled={s.purchased.includes(u.id) || s.money < u.price}
+              onClick={() => s.buy(u.id)}
+            >
+              {s.purchased.includes(u.id) ? "✓" : moneyText(u.price)}
+            </button>
+          </div>
+        ))}
+      <div className="ownership">
+        <b>
+          {s.business.owned
+            ? "This café is yours."
+            : "One day, your own little café."}
+        </b>
+        <p>
+          {s.business.owned
+            ? "Only utilities remain at closing."
+            : "Save $500 to remove nightly rent."}
+        </p>
+        <button
+          className="secondary-button compact"
+          disabled={s.business.owned || s.money < 500}
+          onClick={s.buyCafe}
+        >
+          {s.business.owned ? "Owned" : "Buy the café · $500"}
+        </button>
       </div>
-      <p className="phone-footnote">Every piece finds its own perfect spot.</p>
+      <button
+        className="secondary-button full-width"
+        onClick={() => {
+          s.closeCafe();
+          useGame.setState({ phone: false });
+        }}
+      >
+        Close after current orders
+      </button>
     </>
+  );
+}
+function CafeGram() {
+  const s = useGame();
+  return (
+    <>
+      <div className="phone-intro">
+        <span>CAFEGRAM / A LITTLE COMMUNITY</span>
+        <h3>Familiar faces. New stories.</h3>
+        <p>{s.followers} people follow your little corner of the night.</p>
+      </div>
+      {s.posts.length ? (
+        s.posts.map((post) => (
+          <article className="social-post" key={post.id}>
+            <header>
+              <span style={{ background: customerById(post.customer).palette }}>
+                {customerById(post.customer).name[0]}
+              </span>
+              <div>
+                <b>{customerById(post.customer).handle}</b>
+                <small>
+                  {post.time} · at {s.business.name}
+                </small>
+              </div>
+            </header>
+            <div className="social-art">
+              <Icon name="coffee" size={42} />
+              <Icon name="rain" size={25} />
+              {post.text.includes("cookies") && (
+                <Icon name="cookie" size={29} />
+              )}
+            </div>
+            <p>{post.text}</p>
+            <small>
+              <Icon name="heart" size={13} /> {post.likes} little appreciations
+            </small>
+          </article>
+        ))
+      ) : (
+        <p className="empty-note">
+          Serve someone a warm drink. Their next little post may be about you.
+        </p>
+      )}
+      <h4>Your regulars</h4>
+      {customers.map((c) => (
+        <div className="regular-row" key={c.id}>
+          <span style={{ background: c.palette }}>{c.name[0]}</span>
+          <div>
+            <b>{c.name}</b>
+            <small>{c.tag}</small>
+          </div>
+          <em>{familiarityLabel(s.familiarity[c.id] ?? 0)}</em>
+        </div>
+      ))}
+    </>
+  );
+}
+export function Phone() {
+  const open = useGame((s) => s.phone),
+    app = useGame((s) => s.phoneApp),
+    money = useGame((s) => s.money);
+  if (!open) return null;
+  return (
+    <div className="phone-layer">
+      <section className="business-phone" aria-label="Business phone">
+        <div className="phone-statusbar">
+          <span>20:08</span>
+          <i />
+          <span>● ▰</span>
+        </div>
+        <header className="phone-app-header">
+          <div>
+            <span>AFTER HOURS</span>
+            <h2>{apps.find((a) => a.id === app)?.label}</h2>
+          </div>
+          <button
+            className="icon-button"
+            aria-label="Close phone"
+            onClick={() => useGame.setState({ phone: false })}
+          >
+            <Icon name="close" />
+          </button>
+        </header>
+        <div className="phone-balance">
+          <Icon name="bank" size={15} /> Your till <b>{moneyText(money)}</b>
+        </div>
+        <div className="phone-scroll">
+          {app === "Supply" ? (
+            <SupplyShop />
+          ) : app === "Equipment" ? (
+            <EquipmentShop />
+          ) : app === "Bank" ? (
+            <Bank />
+          ) : app === "Café" ? (
+            <Manager />
+          ) : (
+            <CafeGram />
+          )}
+        </div>
+        <nav className="phone-apps">
+          {apps.map((a) => (
+            <button
+              key={a.id}
+              className={app === a.id ? "active" : ""}
+              aria-label={a.label}
+              onClick={() => useGame.setState({ phoneApp: a.id })}
+            >
+              <Icon name={a.icon} size={19} />
+              <span>
+                {a.id === "CafeGram"
+                  ? "Social"
+                  : a.id === "Café"
+                    ? "Manager"
+                    : a.id}
+              </span>
+            </button>
+          ))}
+        </nav>
+        <div className="phone-home-indicator" />
+      </section>
+    </div>
   );
 }

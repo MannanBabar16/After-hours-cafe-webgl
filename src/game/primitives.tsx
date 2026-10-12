@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import type { ThreeElements } from "@react-three/fiber";
@@ -126,6 +126,7 @@ export function Label({
     tex.colorSpace = THREE.SRGBColorSpace;
     return tex;
   }, [text, color, background, font]);
+  useEffect(() => () => texture.dispose(), [texture]);
   return (
     <mesh position={position} rotation={rotation}>
       <planeGeometry args={size} />

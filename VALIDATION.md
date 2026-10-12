@@ -1,29 +1,46 @@
-# Coffee Craft expansion — validation
+# Validation · 2.0 operations upgrade
 
-Validated in Chrome on Windows, 8 October 2026.
+Verified locally in Chrome on Windows, 12 October 2026. Browser reports are in `docs/qa/`.
 
-## Completed checks
+## Automated checks
 
-- Strict TypeScript compilation and Vite production build passed.
-- All 20 Vitest tests passed. Coverage includes service and single payments, wrong recipes, recipe unlocks, milk quality, purchases, regulars/posts, closing, pause, saves, grind direction and feedback, dose/inventory consumption, discarded-cup costs, restock cash accounting, free practice, practice-save isolation, quoted prices, pastry margin, single goal rewards, supplier credit with negative balances, operating profit, ownership and rent, and manual/robot table cleanup.
-- A browser playthrough used actual UI actions to grind, distribute, tamp, lock, extract and serve Espresso to Minho through WASD movement and proximity E. The $5 sale, consumed beans, $0.80 ingredient cost, XP and Latte unlock were verified.
-- Browser UI checks covered the café desk, paused desk clock, pricing, pastries, restocking, live café/apron/cup/wall customization, Latte and Americano practice, wand purging, milk release, rosetta selection, practice logging, early closing, charged costs, another evening and reload. Practice preserved cash, inventory, café time and XP.
-- A separate compiled-build playthrough repeated the full espresso ritual, movement/service, inventory delivery, phone/shop, pause and save/reload without source imports or debug controls. Sixteen requests remained on the local origin; there were no runtime page or console errors.
-- The final readability pass gave desk buttons a clear contrast and kept the brewing action pinned inside a scrollable panel. The café desk and brewing panels, including their main actions, were verified at 1366×768, 1920×1080, 2560×1440 and 390×844. Desktop remains the primary target.
-- Title, café, phone, brewing, management and closing screenshots are included. Later-shift screenshots use representative test fixtures; no cheat UI is included in the game.
+- Strict TypeScript and Vite production build passed.
+- 42 Vitest tests passed: actual stock transfers, repeated brew, insufficient stock, partial/wrong/duplicate orders, deliveries, baking/grace/overflow, drive-through spacing, Bomi reservations and handoffs, upgrades, safe drops, Mochi, bounded credit, menu quotes, closing, reload and old-save migration.
+- Production dependency audit reported zero known vulnerabilities at verification time.
 
-## Repository setup checks
+## Browser playthroughs
 
-- Clean `npm ci` installation completed on Node.js 22.14.0. The refreshed lockfile and Vitest 5.0.3 report zero known dependency vulnerabilities with npm audit on 8 October 2026.
-- All 20 tests passed after the test-tool upgrade. Strict TypeScript compilation and the production build passed again.
-- README image paths were checked; the illustrated SVG banner was rendered in Chrome and visually reviewed.
-- GitHub Actions uses Node.js 22, the committed lockfile, the same tests, and the production build. It retains a downloadable compiled-game artifact for 14 days.
-- GitHub Actions is enabled, the workflow is registered, and the official action references were verified through GitHub's API and pinned to commit SHAs. Push and manual runs both failed before any job was created (`startup_failure`, zero jobs). Cloud execution remains unverified; local installation, tests, and build passed. Check the [Actions page](https://github.com/MannanBabar16/after-hours-cafe-webgl/actions) and account Actions/billing availability before expecting a CI artifact. No billing settings were changed.
+| Check | What was exercised |
+| --- | --- |
+| Indoor coffee | Actual movement and E: accept Minho's espresso, cup dispenser, machine menu, brew, collect, serve, final payment |
+| Camera and carry | Box pickup, V to first person, phone, V back, same position/box; G drop and retrieval |
+| Physical supplies | Phone checkout, visible delivery, outside box pickup, matching refill, remainder preserved |
+| Baking | Prepare real dough tray, carry to oven, load/start, wait, collect, transfer four cookies into display |
+| Equipment | Purchase Bomi and larger milk tank through phone; milk stock remains eight while capacity increases to sixteen |
+| Robot | Prepare actual latte, load Bomi, wait for travel/delivery, receive one shared sale |
+| Drive-through | Accept espresso plus two cookies; coffee and first cookie leave receipt unpaid, second cookie completes payment; car departs |
+| Closing and next shift | Close through Manager, inspect report, reload/Continue report without double overhead, begin evening two with cash/stock/upgrades preserved |
+| First-person controls | Real pointer lock and mouse look; E cup pickup, strafe, machine interaction, brewing and collecting; menus release mouse; coffee survives return to diorama |
 
-## Performance and limits
+Development fixtures were used to unlock the bakery early, lower milk for a refill test, fund two equipment purchases, and create known indoor/drive receipts plus display cookies for the service test. The earlier bakery test separately produced those cookies from dough. These are targeted browser checks, not a claim that two natural twelve-minute shifts were played end to end.
 
-Static sun shadows are cached. Render resolution adapts toward a 60 FPS frame budget, while CSS interface text remains at native display resolution. Light mode lowers rain density and disables sun shadows. The available test GPU is an NVIDIA GeForce GT 430; results on this older device are not a universal performance guarantee.
+The compiled build passed an actual espresso sale ($89.62 after its first payment), development-reference/panel exclusion, a 390-pixel supply checkout without horizontal overflow, and reload/Continue preserving cash and the completed order. Final screenshot review also verified the production phone with a 30-pixel status bar and 546-pixel usable scrolling area at 390×844, plus the production first-person camera. Screenshots reflect playable local builds; the first-person showcase uses a camera-position/angle fixture with an actually brewed latte, and the service/bakery/report screenshots include the documented fixtures.
 
-Coffee flow, puck quality, milk and art are game abstractions. The journal identifies recipe values as starting points and links to primary coffee equipment guidance. Sound is synthesized with WebAudio, including continuous machine loops and layered interaction effects. Browser playback begins on the opening click; volume is adjustable.
+## Manual acceptance checklist
 
-Saves are local to the browser and origin. Local and hosted saves do not synchronize. A private hosted release is verified by Sites deployment status. Multiplayer, Steam packaging, a physical fluid simulator and a staff system are outside this browser build.
+- [ ] Start with a fresh save, open, complete the first order.
+- [ ] Purchase stock, carry boxes, refill matching equipment, recycle empty packaging.
+- [ ] Brew while cookies bake; transfer and serve the cookies.
+- [ ] Complete an indoor receipt and a multi-item drive receipt exactly once.
+- [ ] Buy capacity and confirm it adds no stock; load prepared items onto Bomi.
+- [ ] Switch cameras carrying a drink; open/close menus and resume mouse look.
+- [ ] Close, reload, start another evening with equipment and remaining stock.
+- [ ] Check a slow device with Light graphics and reduced volume.
+
+## Practical limitations
+
+A stylized browser prototype, primarily for desktop keyboard and mouse. Touch movement and responsive phone controls are provided; full mobile gameplay ergonomics and broad device coverage need further playtesting. Adaptive resolution and bounded simulation reduce cost, but no universal frame-rate claim is made.
+
+There is one automatic coffee machine, one oven, one serving robot, and one cleaning robot. The serving robot carries prepared products only and serves indoor customers. There is no multiplayer, server economy, cloud save, Steam integration, photorealistic café, or manual espresso extraction. An overbaked batch uses one quality value, including when mixed into an existing display batch. Saves remain browser/origin-specific.
+
+GitHub Actions is configured to repeat the local checks. A cloud run can be prevented by account-level billing or runner restrictions; local verification and public Sites hosting do not depend on an Actions runner.

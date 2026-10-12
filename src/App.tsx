@@ -6,7 +6,6 @@ import { useGame } from "./store/game";
 import { HUD, Notifications } from "./ui/HUD";
 import { Phone } from "./ui/Phone";
 import { Workstation } from "./ui/Workstation";
-import { Management } from "./ui/Management";
 import { audio } from "./game/audio";
 import {
   TitleScreen,
@@ -14,6 +13,7 @@ import {
   SummaryScreen,
   PauseScreen,
   HelpScreen,
+  DebugPanel,
 } from "./ui/Screens";
 import "./styles.css";
 class RenderBoundary extends Component<
@@ -46,17 +46,11 @@ export default function App() {
   const settings = useGame((s) => s.settingsOpen);
   const paused = useGame((s) => s.paused);
   const help = useGame((s) => s.help);
-  const management = useGame((s) => s.managementOpen);
   useEffect(() => {
     audio.setPaused(
-      paused ||
-        help ||
-        settings ||
-        management ||
-        phase === "title" ||
-        phase === "summary",
+      paused || help || settings || phase === "title" || phase === "summary",
     );
-  }, [paused, help, settings, management, phase]);
+  }, [paused, help, settings, phase]);
   return (
     <main className={`game-shell ${phase} ${workstation ? "at-bar" : ""}`}>
       <RenderBoundary>
@@ -79,7 +73,7 @@ export default function App() {
       {paused && phase !== "title" && <PauseScreen />}
       {help && <HelpScreen />}
       {settings && <SettingsScreen />}
-      {management && <Management />}
+      {import.meta.env.DEV && <DebugPanel />}
     </main>
   );
 }

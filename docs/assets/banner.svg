@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-labelledby="title desc">
   <title id="title">After Hours Café — Coffee craft and café life</title>
   <desc id="desc">A warm ivory title and an illustrated coffee cup, plant, and moon against a rainy midnight green background.</desc>
+  <style>@keyframes steam{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:.7;transform:translateY(-7px)}} #warm-steam{animation:steam 4s ease-in-out infinite}@media(prefers-reduced-motion:reduce){#warm-steam{animation:none}}</style>
   <defs>
     <linearGradient id="night" x2="1" y2="1"><stop stop-color="#172d32"/><stop offset="1" stop-color="#28443b"/></linearGradient>
     <linearGradient id="cup" x2="0" y2="1"><stop stop-color="#fff3d7"/><stop offset="1" stop-color="#d4c39c"/></linearGradient>
@@ -12,10 +13,10 @@
   <path d="M57 81h32" stroke="#e4c786" stroke-width="2"/>
   <text x="102" y="86" font-family="Arial, sans-serif" font-size="13" letter-spacing="4" fill="#e4c786">A LITTLE SOMETHING WARM</text>
   <text x="56" y="175" font-family="Georgia, serif" font-size="66" fill="#f8eed7">After Hours Café</text>
-  <text x="60" y="218" font-family="Arial, sans-serif" font-size="21" fill="#c2d2c5">Coffee craft. Café life. One good cup at a time.</text>
+  <text x="60" y="218" font-family="Arial, sans-serif" font-size="21" fill="#c2d2c5">Stock. Brew. Bake. Serve. Make it yours.</text>
   <g font-family="Arial, sans-serif" font-size="12" letter-spacing="2" fill="#f0e4c7">
     <rect x="59" y="260" width="136" height="36" rx="18" fill="#496450"/>
-    <text x="79" y="283">LEARN &amp; BREW</text>
+    <text x="79" y="283">BREW &amp; BAKE</text>
     <rect x="207" y="260" width="146" height="36" rx="18" fill="#496450"/>
     <text x="226" y="283">RUN THE CAFÉ</text>
     <rect x="365" y="260" width="167" height="36" rx="18" fill="#496450"/>
@@ -27,7 +28,7 @@
     <circle cx="220" cy="23" r="24" fill="#28443b"/>
     <ellipse cx="104" cy="265" rx="150" ry="22" fill="#101f23" opacity=".35"/>
     <path d="M-12 249h291" stroke="#8a9273" stroke-width="2"/>
-    <path d="M29 83c-19-23 28-30 11-57M79 81c-17-18 21-26 10-45M128 87c-18-22 23-31 15-48" fill="none" stroke="#d7e4d5" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>
+    <path id="warm-steam" d="M29 83c-19-23 28-30 11-57M79 81c-17-18 21-26 10-45M128 87c-18-22 23-31 15-48" fill="none" stroke="#d7e4d5" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>
     <path d="M158 125h18c47 0 47 67 0 67h-14" fill="none" stroke="#ddcea8" stroke-width="17"/>
     <ellipse cx="93" cy="235" rx="113" ry="15" fill="#a59f7b"/>
     <ellipse cx="93" cy="230" rx="108" ry="13" fill="#eee2c4"/>
