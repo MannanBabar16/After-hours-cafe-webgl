@@ -1,6 +1,6 @@
 # After Hours Café — portable project context
 
-Updated 12 October 2026. This is the useful working context from the original development chat, not a full chat export. Read the current code and Git history if this document later becomes stale.
+Updated 13 October 2026. This is the useful working context from the original development chat, not a full chat export. Read the current code and Git history if this document later becomes stale.
 
 ## Continue on another computer
 
@@ -38,7 +38,7 @@ Game version **3.1.0**. Latest gameplay implementation commit before this docume
 - Release/source/build ZIP: https://github.com/MannanBabar16/After-hours-cafe-webgl/releases/tag/v3.1.0
 - Sites identity is tracked in `.openai/hosting.json`. Reuse its exact project ID and preserve the public audience. The last verified hosting publication is saved Site version 4, containing game 3.1.0.
 - Source, screenshots, setup, design notes and validation reports are committed. `node_modules/` and `dist/` are ignored; regenerate with `npm ci` and `npm run build`. The release ZIP also contains the compiled build.
-- There is no unfinished implementation request at this handoff. The user is preparing to continue on another computer.
+- An additional public Vercel deployment and a player-feedback kit are now prepared; see the launch update below. The gameplay release remains 3.1.0.
 
 ## Mechanics to preserve
 
@@ -76,3 +76,16 @@ A controlled fresh-game 1366×768 comparison against the exact 3.0 commit record
 Desktop keyboard/mouse is the primary experience. Broad mobile/hardware playtesting, a longer campaign, cloud saves, multiplayer, manual espresso extraction and Steam integration remain outside the shipped prototype. GitHub cloud checks have failed; an earlier inspected run was blocked by the owner's account billing lock. Diagnose the current run before attributing a new failure. Local validation and public hosting succeeded independently.
 
 See `VALIDATION.md`, `docs/ART_DIRECTION.md` and `docs/ARCHITECTURE.md` for deeper evidence, layout reasoning and acceptance checks. New changes should update this handoff so the project context keeps traveling with the repository.
+
+## LinkedIn launch and feedback update — 13 October 2026
+
+- The user requested actual 4K screenshots, main-UI thumbnail options, a Vercel link for LinkedIn, a short themed Google feedback form, and a casual caption about testing ideas for a future PC/Steam game. Do not describe the browser prototype as a released Steam game or claim it was built without AI assistance.
+- Public Vercel game: https://after-hours-cafe-webgl.vercel.app. Existing project reused: `prj_TCg3dnxeeIfiFs7rEYK347V3SFCl`, under `mannanbabar16's projects`. Login protection was disabled as requested. Node 22.x, Vite, `npm ci`, `npm run build`, `dist`; tracked configuration is `vercel.json`. Existing Sites publication remains available.
+- Verified Vercel deployment `dpl_HEj9L7cAR3tUVWA4z5p652xnsDmK` reached READY from source commit `fa48f130ba65d2a0f35405137ac4983ecfbef783`. A fresh unsigned-in browser returned HTTP 200, rendered the main HUD and started/opened a shift without browser errors or failed requests. Its social-preview image also returned 200. `docs/qa/vercel-public-launch.json` records this check. These hosting changes did not change gameplay rules.
+- `public/social-preview.jpg` is an actual in-engine main-UI shot. HTML has social metadata with the absolute Vercel image URL. The owner's personal GitHub repository contains the same deployment setup and feedback source. Further docs commits need no game rebuild if runtime inputs do not change.
+- `docs/feedback/form-spec.json` centrally defines questions, branch mapping and theme. Run `node scripts/prepare-feedback.mjs` to regenerate the ready-to-paste Apps Script builder and standalone design preview. `SETUP.md` explains Google account execution, theme/header, public responder access and signed-out verification.
+- The Google Form is NOT created/published by local preparation. The owner must run `createCafeFeedbackForm` in their own Apps Script project, theme the draft, publish with Anyone with the link, and supply the public responder URL. At this update the user has not supplied a URL. Never invent one or label the local preview as collecting feedback.
+- Three routes separate actual players, people blocked from playing, and screenshot-only viewers. Each sees three short sections. Played route has six required choices; other routes three. Device, PC genre familiarity and one comment are optional. A private linked Sheet includes response storage and an empty decision log. No email collection, mandatory writing or public results.
+- Preview checks passed all three routes, required entry validation and 390px mobile overflow check, with no page errors. Actual Google account execution and Google-hosted form access remain unverified until the owner supplies the link. `docs/feedback/preview-validation.json` distinguishes preview QA from live form publishing.
+- `docs/feedback/LinkedIn-Caption.txt` lists current features and has the real Vercel URL; its Google Form placeholder still needs the owner's responder link. Preserve a caption-only version usable before the form is published.
+- Screenshots and the ready-to-share feedback ZIP also exist outside the source repository in the local workspace `outputs/` directory. They are not assumed to follow a Git clone. Browser saves on the Sites origin do not transfer automatically to Vercel.

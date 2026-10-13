@@ -1,0 +1,16 @@
+{
+  "url": "https://after-hours-cafe-webgl.vercel.app",
+  "context": "fresh unsigned-in browser, no protection bypass",
+  "errors": [],
+  "failedResponses": [],
+  "status": 200,
+  "title": "After Hours Café",
+  "hud": "After Hours Café\nEVENING 01\nOPEN · WELCOME IN\n8:01 PM\nA soft rainy evening\nIN YOUR TILL\n$85.00",
+  "canvas": {
+    "width": 1153,
+    "height": 648
+  },
+  "ogImage": "https://after-hours-cafe-webgl.vercel.app/social-preview.jpg",
+  "ogImageStatus": 200,
+  "startedShift": true
+}
