@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="400" viewBox="0 0 1600 400">
+<defs><pattern id="tiles" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M80 0H0V80" fill="none" stroke="#d8d4b9" opacity=".35"/></pattern></defs>
+<rect width="1600" height="400" rx="30" fill="#efe3cb"/><rect width="1600" height="400" rx="30" fill="url(#tiles)"/>
+<path d="M1040 0h560v400H915c135-108 51-252 125-400" fill="#35664f"/>
+<path d="M1460 0h140v400h-215c42-150 128-191 75-400" fill="#436e53"/>
+<circle cx="101" cy="83" r="22" fill="#d7ad70"/><circle cx="111" cy="76" r="21" fill="#efe3cb"/>
+<text x="139" y="91" font-family="Arial,sans-serif" font-size="17" letter-spacing="4" fill="#617361">A LITTLE PLACE AFTER DARK</text>
+<text x="81" y="208" font-family="Georgia,serif" font-size="83" font-style="italic" fill="#493c2f">After Hours Café.</text>
+<text x="87" y="272" font-family="Arial,sans-serif" font-size="28" fill="#64715d">A few taps. A better next evening.</text>
+<rect x="87" y="310" width="174" height="40" rx="20" fill="#dce3cc"/><text x="112" y="337" font-family="Arial,sans-serif" font-size="16" fill="#35664f">PLAYER FEEDBACK</text>
+<g transform="translate(1160 112)"><ellipse cx="39" cy="206" rx="133" ry="23" fill="#294e3c"/><ellipse cx="35" cy="190" rx="114" ry="14" fill="#c9b89b"/><path d="M-49 49h160v74q0 60-80 60t-80-60z" fill="#f7eedc"/><ellipse cx="31" cy="50" rx="80" ry="20" fill="#ddc7a8"/><ellipse cx="31" cy="51" rx="65" ry="13" fill="#78523b"/><path d="M111 72h17q62 0 42 54-13 35-62 25" fill="none" stroke="#f7eedc" stroke-width="20"/><path d="M10 16q-21-27-1-49m40 49q21-27 1-49" fill="none" stroke="#b5ceb1" stroke-width="7" stroke-linecap="round"/>
+<path d="M-40 190h150" stroke="#a89472" stroke-width="4" stroke-linecap="round"/>
+<g transform="translate(180 37)"><path d="M0 95h80l-10 80H10z" fill="#d0a384"/><path d="M40 100V-15" stroke="#a6ba91" stroke-width="6"/><ellipse cx="17" cy="54" rx="18" ry="32" fill="#91ae83" transform="rotate(-38 17 54)"/><ellipse cx="62" cy="15" rx="18" ry="30" fill="#a1bd91" transform="rotate(38 62 15)"/><ellipse cx="27" cy="-12" rx="16" ry="25" fill="#b1cba3" transform="rotate(-32 27 -12)"/></g></g>
+<g fill="#d9bb7e"><path d="m1090 75 5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/><circle cx="1450" cy="87" r="4"/><circle cx="1100" cy="290" r="4"/></g>
+</svg>

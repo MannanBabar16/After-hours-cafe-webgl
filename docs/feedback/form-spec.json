@@ -1,0 +1,43 @@
+{
+  "title": "After Hours Café · leave a little feedback",
+  "description": "I'm testing ideas for a future PC café game. A few honest taps help me decide what to keep, fix and build next. About a minute; typing is optional. No name or email needed.",
+  "confirmation": "Thanks for stopping by. I'll use this to choose what to fix and build next for the PC game. Even one small observation helps. — Mannan",
+  "theme": { "accent": "#35664f", "background": "#f4e8d6", "text": "#493c2f", "headerFont": "Georgia", "bodyFont": "Arial" },
+  "entry": {
+    "id": "experience", "title": "What did you get to try?", "required": true,
+    "options": ["I played a little", "I tried, but couldn't play", "I only saw the screenshots / post"],
+    "routes": ["played", "blocked", "preview"]
+  },
+  "branches": {
+    "played": {
+      "title": "2 / 3 · how was your evening?", "description": "A short session is enough. Pick what fits your experience.",
+      "questions": [
+        { "id": "highlight", "title": "What did you enjoy most?", "required": true, "options": ["Making and serving coffee", "Running the café and earning money", "The cozy café atmosphere", "Baking, restocking or upgrading", "I didn't get far enough to tell", "Nothing stood out yet"] },
+        { "id": "friction", "title": "Where did you get stuck, if anywhere?", "required": true, "options": ["Working out what to do first", "Moving or using the camera", "Making coffee / using equipment", "Finding or completing an order", "Buying supplies / understanding money", "Nothing got in my way", "I didn't get far enough to tell"] },
+        { "id": "pace", "title": "How did the pace feel?", "required": true, "options": ["Too slow — I wanted more to do", "About right for me", "Too rushed — I wanted more breathing room", "I didn't play long enough to tell"] },
+        { "id": "return", "title": "After this session, would you choose another evening?", "required": true, "options": ["Yes, I'd keep playing", "Maybe, with a few changes", "Probably not for me", "I didn't play enough to decide"] }
+      ]
+    },
+    "blocked": {
+      "title": "2 / 3 · what got in the way?", "description": "You don't need to review gameplay you couldn't try.",
+      "questions": [
+        { "id": "blocker", "title": "What happened when you tried?", "required": true, "options": ["The page wouldn't open / asked me to sign in", "The game kept loading or showed a blank screen", "It ran too slowly / froze", "I couldn't work out the controls", "It was difficult to use on my phone", "Something else"] }
+      ]
+    },
+    "preview": {
+      "title": "2 / 3 · just your first impression", "description": "No need to guess how it plays. This part is about what you saw.",
+      "questions": [
+        { "id": "first_impression", "title": "What caught your attention, if anything?", "required": true, "options": ["The cozy café art and mood", "Making coffee", "Running a café business", "The customers, robots or drive-through", "Nothing caught my attention yet", "I couldn't tell what the game was about"] }
+      ]
+    }
+  },
+  "common": {
+    "title": "3 / 3 · help me choose the next step", "description": "One priority is more useful to me than a long wishlist.",
+    "questions": [
+      { "id": "priority", "title": "If I focused on one thing next, what would you pick?", "required": true, "options": ["Clearer first steps and controls", "More hands-on coffee making", "More café decoration and layouts", "Deeper business choices and progression", "More customer stories and regulars", "More recipes, food and daily events", "Smoother performance and fewer bugs", "Something else / I'm not sure yet"] },
+      { "id": "device", "title": "What did you use to view or play?", "required": false, "options": ["Windows PC / laptop", "Mac / Linux computer", "Android phone / tablet", "iPhone / iPad", "Another device"] },
+      { "id": "pc_habit", "title": "Do you usually play café / cozy management games on PC?", "required": false, "options": ["Yes, fairly often", "Sometimes", "Rarely / never", "I don't play on PC"] },
+      { "id": "detail", "title": "One thing you'd change?", "required": false, "type": "paragraph", "help": "Optional. One sentence is plenty. If something broke, what were you doing and which browser were you using? Please leave out personal information." }
+    ]
+  }
+}

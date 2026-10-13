@@ -1,0 +1,20 @@
+{
+  "routes": [
+    {
+      "route": "played",
+      "completed": true
+    },
+    {
+      "route": "blocked",
+      "completed": true
+    },
+    {
+      "route": "preview",
+      "completed": true
+    }
+  ],
+  "errors": [],
+  "publishedGoogleForm": false,
+  "mobileOverflow": false,
+  "requiredGate": true
+}
