@@ -1,6 +1,10 @@
 # After Hours Café feedback setup
 
-The question flow, theme assets, draft builder and preview are prepared. A live Google Form still needs to be created in the owner's Google account. No Google Form has been created by running these files locally.
+The owner has published the [live feedback form](https://docs.google.com/forms/d/e/1FAIpQLSdX1oLnKoee8dOPirDG1TEcgjdKUUTwxdzktdDolkFt-2Wicw/viewform?usp=header). A fresh unsigned-in browser verified access, all three routes and the mobile layout. No test responses were submitted; private response-sheet storage remains unverified.
+
+The live form still uses the default purple theme. In its Google editor, open the theme palette, upload **Google-Forms-Header.png**, set accent **#35664f**, and choose a pale cream background. The supplied header and local preview show the intended look. The optional Google sign-in prompt is for saving progress and does not block answering.
+
+The instructions below describe how the owner created the form and how to recreate it in another account. Re-running the same builder returns the existing form, rather than updating it or creating a duplicate.
 
 ## Create it in your Google account
 
@@ -12,7 +16,7 @@ The question flow, theme assets, draft builder and preview are prepared. A live 
 6. Check Settings: email collection **off**, limit to one response **off**, response editing **off**, results summary **off**, question shuffling **off**. Keep the form accessible without a Google login. If your account offers **Disable autosave for all respondents**, turn it on to avoid a save-progress sign-in prompt.
 7. Click **Publish**, choose responder access **Anyone with the link**, and copy the **responder** link. Keep editor access restricted to you. Publishing alone is not the same as public responder access.
 8. Open the responder link in a signed-out/incognito browser. Submit one clearly marked test on each path: played, couldn't play, screenshots only. Confirm each goes to the shared last section and that rows appear in the private spreadsheet. Remove only your test responses after verification.
-9. Send the responder link back to this chat so it can be added to the launch caption and verified. Do not send the private spreadsheet or editor link in a LinkedIn post.
+9. The owner has supplied the public responder link; it is now verified and included in the launch caption. Do not send the private spreadsheet or editor link in a LinkedIn post.
 
 Google documents [answer-based sections](https://support.google.com/docs/answer/141062?hl=en), [theming](https://support.google.com/docs/answer/145737?hl=en), and [publishing and responder access](https://support.google.com/docs/answer/2839588?hl=en). The draft builder uses the [Apps Script Forms service](https://developers.google.com/apps-script/reference/forms/form) and the [documented page-break navigation rules](https://developers.google.com/apps-script/reference/forms/page-break-item).
 

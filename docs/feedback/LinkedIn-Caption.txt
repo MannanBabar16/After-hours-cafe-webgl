@@ -16,7 +16,7 @@ There's rain, music and sound effects too. Headphones help with the vibe.
 I'd love some honest feedback before I take this further. What feels good, what gets annoying, and what would make you want to come back to a game like this?
 
 You can try it here: https://after-hours-cafe-webgl.vercel.app
-Quick feedback form — mostly taps, no essay needed: [GOOGLE_FORM_LINK]
+Quick feedback form — mostly taps, no essay needed: https://docs.google.com/forms/d/e/1FAIpQLSdX1oLnKoee8dOPirDG1TEcgjdKUUTwxdzktdDolkFt-2Wicw/viewform?usp=header
 
 Even if you only look through the screenshots, I'd be interested to hear what you'd want from this kind of game.
 

@@ -10,6 +10,6 @@ The HTML includes social title/description and `social-preview.jpg`, an actual i
 
 The existing project `prj_TCg3dnxeeIfiFs7rEYK347V3SFCl` was reused. The 13 October 2026 production deployment `dpl_HEj9L7cAR3tUVWA4z5p652xnsDmK` reached READY from commit `fa48f130ba65d2a0f35405137ac4983ecfbef783`. Login protection is disabled. A fresh unsigned-in browser loaded the production alias and started a shift; all game requests and the social image succeeded. See [the launch check](qa/vercel-public-launch.json).
 
-Google Forms setup and the feedback question source are in [docs/feedback/SETUP.md](feedback/SETUP.md). A respondent URL should be published and checked without sign-in before being inserted into the LinkedIn caption.
+Google Forms setup and the feedback question source are in [docs/feedback/SETUP.md](feedback/SETUP.md). The owner's [public feedback form](https://docs.google.com/forms/d/e/1FAIpQLSdX1oLnKoee8dOPirDG1TEcgjdKUUTwxdzktdDolkFt-2Wicw/viewform?usp=header) was verified without sign-in through all three routes and inserted into the LinkedIn caption. Its custom header/theme still needs applying in the Google editor.
 
 Browser saves are local to an origin. Existing saves on the Sites domain do not automatically appear on the Vercel domain.

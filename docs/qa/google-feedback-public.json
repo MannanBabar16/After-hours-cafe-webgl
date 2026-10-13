@@ -1,0 +1,29 @@
+{
+  "url": "https://docs.google.com/forms/d/e/1FAIpQLSdX1oLnKoee8dOPirDG1TEcgjdKUUTwxdzktdDolkFt-2Wicw/viewform?usp=header",
+  "context": "Fresh unsigned-in Chrome contexts; no Google account or protection bypass",
+  "responsesSubmitted": 0,
+  "routes": [
+    {
+      "route": "played",
+      "status": 200,
+      "threeSectionsReached": true,
+      "publicSubmitAvailable": true,
+      "responseSubmitted": false
+    },
+    {
+      "route": "blocked",
+      "status": 200,
+      "threeSectionsReached": true,
+      "publicSubmitAvailable": true,
+      "responseSubmitted": false
+    },
+    {
+      "route": "preview",
+      "status": 200,
+      "threeSectionsReached": true,
+      "publicSubmitAvailable": true,
+      "responseSubmitted": false
+    }
+  ],
+  "mobileOverflow": false
+}

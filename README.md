@@ -12,7 +12,7 @@ The evening now continues beyond your windows: a pastel neighborhood, blossom tr
 
 [Play online](https://after-hours-cafe.upbeat-badge-4829.chatgpt.site) — public access, no game account required. Saves stay in your browser.
 
-[Play on Vercel](https://after-hours-cafe-webgl.vercel.app) · [Hosting setup](docs/VERCEL.md) · [Player feedback form kit](docs/feedback/SETUP.md). Both game links are public; saves stay with the browser and domain where you play.
+[Play on Vercel](https://after-hours-cafe-webgl.vercel.app) · [Hosting setup](docs/VERCEL.md) · [Give feedback](https://docs.google.com/forms/d/e/1FAIpQLSdX1oLnKoee8dOPirDG1TEcgjdKUUTwxdzktdDolkFt-2Wicw/viewform?usp=header) · [Feedback form setup](docs/feedback/SETUP.md). Both game links are public; saves stay with the browser and domain where you play.
 
 <img src="cafe-preview.png" alt="The cozy café, stockroom, coffee counter, and drive-through lane" width="100%" />
 
