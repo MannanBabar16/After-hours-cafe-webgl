@@ -1,6 +1,6 @@
 # After Hours Café — portable project context
 
-Updated 13 October 2026. This is the useful working context from the original development chat, not a full chat export. Read the current code and Git history if this document later becomes stale.
+Updated 20 October 2026. This is the useful working context from the original development chat, not a full chat export. Read the current code and Git history if this document later becomes stale.
 
 ## Continue on another computer
 
@@ -39,6 +39,19 @@ Game version **3.1.0**. Latest gameplay implementation commit before this docume
 - Sites identity is tracked in `.openai/hosting.json`. Reuse its exact project ID and preserve the public audience. The last verified hosting publication is saved Site version 4, containing game 3.1.0.
 - Source, screenshots, setup, design notes and validation reports are committed. `node_modules/` and `dist/` are ignored; regenerate with `npm ci` and `npm run build`. The release ZIP also contains the compiled build.
 - An additional public Vercel deployment and a player-feedback kit are now prepared; see the launch update below. The gameplay release remains 3.1.0.
+
+## Analytics update — 20 October 2026
+
+The owner requested future visitor/gameplay analytics and an interactive live dashboard while preserving the game. The earlier audit found no collector; old traffic cannot be recovered. The simulation's NPC visitor/follower counters must never be reported as website analytics.
+
+- Owner dashboard: **https://after-hours-cafe-webgl.vercel.app/stats/**. Game: **https://after-hours-cafe-webgl.vercel.app**. Public game access is unchanged. The original Sites publication remains the previous gameplay build; it does not collect these analytics.
+- Own first-party collector, not Vercel's paid custom-event analytics: visits, anonymous browsers, play sessions, foreground play time, completed coffee/cookies/orders/shifts, upgrades, supplies, feature discoveries, referrer hostnames and coarse device/browser. All definitions and free-tier limits are in `docs/ANALYTICS.md`.
+- `src/analytics/` passively observes the store, with no changes to game actions, save schemas, controls, camera, lighting or economy. Telemetry is deferred (~2 KB gzip), bounded and optional; it cannot block play. Privacy opt-out and DNT/GPC are supported.
+- Two serverless routes under `api/analytics/`; shared validation/aggregation/private Blob access under `server/`. Immutable batches plus event-ID deduplication avoid replay and concurrent counter loss. Test cohorts are isolated from the default live view. Missing storage returns unavailable/partial, never made-up zeros.
+- Reuses personal Vercel project `prj_TCg3dnxeeIfiFs7rEYK347V3SFCl` and new private Blob store `store_BanACjof4WCh1WFJ`. Server-only `BLOB_READ_WRITE_TOKEN`, `ANALYTICS_ADMIN_KEY`, `ANALYTICS_HASH_KEY`, `ANALYTICS_STARTED_AT` are configured in Vercel. No paid plan was enabled. Game development still needs no credentials.
+- Dashboard data requires a high-entropy owner key; do not publish it or add it to browser bundles. The owner's access note is outside this repository. On another system, obtain/rotate it through the owner account; do not expect it in Git. Feedback answers remain privately in the existing Google spreadsheet.
+- Checks: all 65 tests, strict TypeScript and production build pass. Local compiled-browser QA confirmed real observer events, preserved saves, bad-key rejection, chart interactions, CSV, mobile layout, logout, opt-out and DNT. Local dashboard API responses were explicitly mocked from captured QA events. Verify the production end-to-end report in `docs/qa/analytics-live.json` for publication status; do not treat local fixture results as production proof.
+- Small-prototype limits: one-minute batches/refresh; 25-second warm list cache; bounded 5,000-batch scan marked partial if capped. Hobby Blob quotas can stop tracking; gameplay continues. Move to a database/rollups if traffic grows. No automatic retention cleanup yet.
 
 ## Mechanics to preserve
 

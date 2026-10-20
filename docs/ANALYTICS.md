@@ -1,0 +1,44 @@
+# Café Observatory
+
+Owner dashboard: **https://after-hours-cafe-webgl.vercel.app/stats/**. The game stays at its existing public URL. Collection begins with the 20 October 2026 release; previous weeks cannot be reconstructed. This is our own first-party analytics, separate from the Vercel Web Analytics dashboard. No paid analytics plan was enabled.
+
+## Access and data
+
+Paste the private owner key into the dashboard. The key is configured as the sensitive Vercel variable `ANALYTICS_ADMIN_KEY`, never a `VITE_` variable. The static dashboard shell is public, but its stats API requires this key. The browser remembers it in session storage until the tab closes or you lock the dashboard. Lock it on shared computers. Do not put the key in a URL, Git, screenshots or public posts. Rotate it through Vercel environment settings if needed, then redeploy. The separately generated `ANALYTICS_HASH_KEY` stays stable across password rotations so browser counts remain comparable.
+
+Dashboard controls: today/7/30/90-day presets, custom date range (up to 93 days), chart metric selection, hover/tap/keyboard details, live/test cohort, manual refresh, one-minute auto-refresh while visible, daily + summary CSV download, and a shortcut to the owner's Google feedback responses. Those responses remain in Google; emails and form answers are not copied into this system.
+
+| Metric                    | Meaning                                                                                                                                                                                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Visits                    | Game page loads, including reloads; excludes the stats and privacy pages.                                                                                                                                                                 |
+| Unique browsers           | Random persistent browser ID, HMAC-hashed before storage. Not a count of verified people. Clearing storage creates a new identity.                                                                                                        |
+| Play sessions             | Page sessions that actually enter playing/closing. A new tab or reload is a new session. Continuing an existing save counts as playing, without replaying old achievements.                                                               |
+| Returning browsers        | Browser IDs with two or more visits **within the selected range**, not lifetime retention.                                                                                                                                                |
+| Active play time          | Foreground time while playing/closing, excluding pause/help/settings. Phones and workstations count because the business remains running. Not a measure of player attention. Mean and median include sessions with zero received seconds. |
+| Seen in last 2 min        | Sessions with an event in the last 130 seconds, within the selected range. Approximate presence, not a socket connection.                                                                                                                 |
+| Coffee / cookies / orders | Completed brewing, baked quantities and completed paid orders observed after collection starts. Café revenue is fictional game money.                                                                                                     |
+| Feature discovery         | Sessions trying cameras, phone apps, help, workstation, customization or robot service, counted once per feature/session.                                                                                                                 |
+
+Charts use UTC days. Daily unique counts do not add up to range unique counts. Funnels show independently reached milestones, because a continued save can skip earlier steps. Sources contain only the referrer hostname; no query strings, UTM values or full URLs are collected. Referrers can be absent or limited by browser privacy.
+
+## How it works
+
+`src/analytics/client.ts` loads after the game entry. It subscribes to the existing Zustand store without mutating it, changing actions, changing save schemas, or causing React renders. `model.ts` compares meaningful transitions. A five-second lightweight clock bounds long gaps. Events flush after three seconds, then once per minute and on hide/exit, with a bounded in-memory queue and retry. Active-time heartbeats contain non-overlapping increments. Browsers can terminate before exit requests arrive, so totals are estimates rather than guarantees. Privacy blockers, Do Not Track, Global Privacy Control and opt-outs reduce coverage.
+
+`POST /api/analytics/events` validates same-origin JSON, size, IDs, event allowlists, timestamps and bounded numeric values. It removes arbitrary fields, hashes visitor IDs and uses immutable UUID-addressed JSON batches in a **private** Vercel Blob store. Retries reuse batch IDs; the reader also deduplicates event IDs across batches. Concurrent sessions never overwrite a shared counter. IP addresses are not stored in analytics records; an ephemeral HMAC of the request IP provides best-effort per-instance throttling. This is prototype telemetry, not fraud-resistant accounting. Hosted platform logs have separate policies.
+
+`GET /api/analytics/stats` authenticates before storage access, aggregates on the server, and returns only aggregate statistics with `private, no-store`. The raw records, stable IDs and credentials never enter dashboard responses. Failed storage reads produce a clear unavailable/partial response, never fabricated zeros. Listing is cached for 25 seconds in warm functions, immutable records are cached, reads are bounded to 12 concurrent downloads and 5,000 batches. Reaching that cap is explicitly marked **partial**. For bigger traffic, migrate to a database or durable daily rollups before treating capped results as full totals.
+
+## Hosting and usage limits
+
+Existing Vercel project: `prj_TCg3dnxeeIfiFs7rEYK347V3SFCl`. Private store: `store_BanACjof4WCh1WFJ`, `after-hours-cafe-analytics`, region `iad1`. `BLOB_READ_WRITE_TOKEN` is provisioned server-side by the store connection. `ANALYTICS_STARTED_AT` records the collection start. These are owner account resources, not dependencies required to run the game locally.
+
+Vercel Hobby Blob currently includes 2,000 advanced operations/month, 10,000 simple operations, 1 GB storage and 10 GB transfer; uploads and listings consume advanced operations. A minute of continuous telemetry generally means one upload, plus the first page batch and exit flush. Repeated cold dashboard reads also use operations. Hobby does not charge overage: Blob becomes unavailable when its free quota is exhausted. In that case tracking can lose data, the dashboard shows unavailable, and the game keeps working. No plan upgrade or paid integration was added. Monitor [Vercel usage](https://vercel.com/dashboard/usage) and [current Blob limits](https://vercel.com/docs/vercel-blob/usage-and-pricing). This setup suits this small prototype; the free allowance is not unlimited analytics capacity.
+
+## Local development and verification
+
+`npm ci`, `npm test`, `npm run build`. Normal localhost and previews do **not** collect. The game works offline and without secrets. `?analytics=test` explicitly enables a separate QA cohort; `?analytics=off` suppresses collection. `public/privacy.html` offers a persistent opt-out without touching gameplay saves. Reload game tabs after changing it. Test traffic never appears in the default live cohort.
+
+Vite serves the game and dashboard shell, not serverless API routes. For end-to-end local work use a linked Vercel development environment, or route APIs to explicit test fixtures in browser QA. Never silently use an in-memory database in production. Unit checks cover observer isolation, continue-save baselines, privacy filtering, duplicate delivery, active interval aggregation, authentication, origin validation and honest storage failures.
+
+Rollback: redeploy the previous production commit. Gameplay saves are unchanged. To disable collection without removing the dashboard, remove `BLOB_READ_WRITE_TOKEN` from the production environment and redeploy; the optional client fails harmlessly. Keep the private store to preserve historical data. Rotate credentials if compromised. There is no automatic data deletion yet; retention and database migration are owner maintenance decisions.

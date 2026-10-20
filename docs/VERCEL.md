@@ -2,7 +2,7 @@
 
 Vercel is an additional public host for the existing browser prototype: **https://after-hours-cafe-webgl.vercel.app**. The original Sites URL stays available. Source remains in the owner's personal repository: https://github.com/MannanBabar16/After-hours-cafe-webgl.
 
-The repository root is the deployment root. Use the Vite preset, Node 22.x, `npm ci`, `npm run build`, and output directory `dist`. No runtime environment variables or backend account are needed. `vercel.json` contains this build configuration and long-lived caching only for Vite's hashed assets. The linked `.vercel` folder is local and ignored.
+The repository root is the deployment root. Use the Vite preset, Node 22.x, `npm ci`, `npm run build`, and output directory `dist`. The game itself needs no backend to run. The optional first-party analytics added on 20 October uses private Vercel Blob and server-only environment variables; see [analytics setup and definitions](ANALYTICS.md). `vercel.json` contains the build configuration, function limits, dashboard headers and long-lived caching for Vite's hashed assets. The linked `.vercel` folder is local and ignored.
 
 Use the stable production alias in public posts. Deployment-specific preview URLs can be protected even when the production site is public. Check the production alias in a fresh signed-out browser without a bypass token. It must open the game and allow starting a shift without a Vercel account.
 

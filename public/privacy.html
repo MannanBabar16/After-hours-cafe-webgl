@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Data & privacy · After Hours Café</title>
+    <link rel="stylesheet" href="/stats/style.css" />
+  </head>
+  <body>
+    <main>
+      <a class="brand" href="/">☾ AFTER HOURS CAFÉ</a>
+      <section class="panel login">
+        <span class="eyebrow">SMALL GAME. THOUGHTFUL DATA.</span>
+        <h1>Your visit,<br /><em>in perspective.</em></h1>
+        <p>
+          This prototype uses first-party analytics to understand what works:
+          visits, play time, coffee made, orders served and which features
+          people try. It helps shape the future PC game.
+        </p>
+        <p>
+          We store a random browser identifier, hashed on the server, plus a
+          session identifier, event timestamps, coarse device/browser categories
+          and the referring website hostname. We do not collect your café name,
+          saves, email, keystrokes, precise location or IP address in the
+          analytics records. Hosting services process network requests
+          separately.
+        </p>
+        <p>
+          Your save stays in your browser. Analytics data is stored privately
+          and viewed by the developer. It is self-reported, not a verified count
+          of people. Data starts with the October 20, 2026 update.
+        </p>
+        <p>
+          Do Not Track and Global Privacy Control disable collection. You can
+          also turn it off here for this browser. Reload any open game tabs
+          after changing this setting. Blocking analytics never prevents play.
+        </p>
+        <button id="toggle" class="primary">Loading preference…</button>
+        <p id="status" class="small" role="status"></p>
+        <p><a href="/">← Back to the café</a></p>
+      </section>
+    </main>
+    <script src="/stats/privacy.js" defer></script>
+  </body>
+</html>

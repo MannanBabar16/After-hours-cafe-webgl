@@ -17,6 +17,7 @@
   "dependencies": {
     "@react-three/drei": "^10.7.0",
     "@react-three/fiber": "^9.4.0",
+    "@vercel/blob": "^2.8.2",
     "lucide-react": "^0.468.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

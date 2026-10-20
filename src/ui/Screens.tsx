@@ -69,7 +69,12 @@ export function TitleScreen() {
         </span>
       </section>
       <div className="title-bottom">
-        <span>카페 · 오늘도 따뜻하게</span>
+        <span>
+          카페 · 오늘도 따뜻하게 ·{" "}
+          <a href="/privacy.html" target="_blank" rel="noopener">
+            Data & privacy
+          </a>
+        </span>
         <span>
           BEST ENJOYED WITH HEADPHONES <Icon name="music" size={14} />
         </span>

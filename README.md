@@ -14,6 +14,8 @@ The evening now continues beyond your windows: a pastel neighborhood, blossom tr
 
 [Play on Vercel](https://after-hours-cafe-webgl.vercel.app) · [Hosting setup](docs/VERCEL.md) · [Give feedback](https://docs.google.com/forms/d/e/1FAIpQLSdX1oLnKoee8dOPirDG1TEcgjdKUUTwxdzktdDolkFt-2Wicw/viewform?usp=header) · [Feedback form setup](docs/feedback/SETUP.md). Both game links are public; saves stay with the browser and domain where you play.
 
+[Café Observatory](https://after-hours-cafe-webgl.vercel.app/stats/) is the private owner dashboard for visitor and gameplay analytics, added 20 October 2026. It includes interactive charts, date filters, play-time and feature metrics, a test cohort and CSV export. [Setup, privacy, definitions and free-tier limits](docs/ANALYTICS.md). The game stays public and works independently of tracking.
+
 <img src="cafe-preview.png" alt="The cozy café, stockroom, coffee counter, and drive-through lane" width="100%" />
 
 ## A miniature world that works

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#25483b" />
+    <title>Café Observatory · After Hours</title>
+    <link rel="stylesheet" href="/stats/style.css" />
+  </head>
+  <body>
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
+    <main>
+      <header>
+        <a class="brand" href="/stats/" aria-label="Café Observatory home"
+          ><span class="brand-icon">☾</span
+          ><span>AFTER HOURS CAFÉ<small>THE OBSERVATORY</small></span></a
+        >
+        <nav>
+          <a href="/" target="_blank" rel="noopener">Open game ↗</a
+          ><button id="logout" hidden>Lock dashboard</button>
+        </nav>
+      </header>
+      <section id="login" class="login panel">
+        <span class="eyebrow">A LITTLE WINDOW INTO YOUR GAME</span>
+        <h1>See what<br /><em>players do.</em></h1>
+        <p>Your café has a story. Here’s where the numbers start telling it.</p>
+        <form id="unlock">
+          <label for="key">Owner access key</label>
+          <div class="unlock-row">
+            <input
+              id="key"
+              type="password"
+              autocomplete="current-password"
+              required
+              minlength="24"
+              placeholder="Your private dashboard key"
+            /><button class="primary">Unlock ↗</button>
+          </div>
+          <p id="login-error" role="alert"></p>
+        </form>
+        <p class="muted small">
+          Owner only. The game stays public. Your key is kept in this tab until
+          you lock it or close the tab.
+        </p>
+      </section>
+      <div id="dashboard" hidden>
+        <section class="intro">
+          <div>
+            <span class="eyebrow">YOUR PLAYERS, IN FOCUS</span>
+            <h1>How’s the<br /><em>café doing?</em></h1>
+            <p>Real visits. Real play. Room to grow.</p>
+          </div>
+          <div class="live-badge">
+            <span class="pulse"></span><span id="live-label">Connecting…</span>
+          </div>
+        </section>
+        <section class="toolbar panel" aria-label="Dashboard filters">
+          <div class="presets">
+            <button data-days="1">Today</button
+            ><button data-days="7" aria-pressed="true">7 days</button
+            ><button data-days="30">30 days</button
+            ><button data-days="90">90 days</button>
+          </div>
+          <div class="dates">
+            <label>From<input id="from" type="date" required /></label
+            ><label>To<input id="to" type="date" required /></label>
+          </div>
+          <label class="cohort"
+            >Traffic<select id="cohort">
+              <option value="live">Live players</option>
+              <option value="test">QA / test only</option>
+            </select></label
+          ><button id="refresh" class="primary">Refresh</button
+          ><button id="export">Export CSV ↓</button>
+        </section>
+        <p id="notice" class="notice" role="status">
+          Loading your café’s numbers…
+        </p>
+        <section
+          id="metrics"
+          class="metrics"
+          aria-label="Key statistics"
+        ></section>
+        <section class="chart-panel panel">
+          <div class="section-top">
+            <div>
+              <span class="eyebrow">THE BIG PICTURE</span>
+              <h2>A rhythm of its own</h2>
+            </div>
+            <label class="chart-select"
+              >Show<select id="metric">
+                <option value="visitors">Unique browsers</option>
+                <option value="players">Players</option>
+                <option value="activeSeconds">Play minutes</option>
+                <option value="coffees">Coffee made</option>
+                <option value="orders">Orders served</option>
+              </select></label
+            >
+          </div>
+          <div id="chart" class="chart" aria-label="Daily activity"></div>
+          <p class="small muted">
+            Hover, tap or focus a day to inspect it. Dates use UTC. Player
+            counts are distinct browsers per day.
+          </p>
+        </section>
+        <section class="two-up">
+          <article class="panel">
+            <span class="eyebrow">FROM CURIOUS TO COFFEE</span>
+            <h2>The player journey</h2>
+            <p class="small muted">
+              Sessions reaching each milestone. Saved-game continuations can
+              skip earlier steps.
+            </p>
+            <div id="funnel"></div>
+          </article>
+          <article class="panel">
+            <span class="eyebrow">WHAT GETS USED</span>
+            <h2>Little discoveries</h2>
+            <p class="small muted">
+              Sessions trying each feature, counted once per session.
+            </p>
+            <div id="features"></div>
+          </article>
+        </section>
+        <section class="three-up">
+          <article class="panel">
+            <span class="eyebrow">WHERE THEY COME FROM</span>
+            <h2>Traffic sources</h2>
+            <div id="sources"></div>
+          </article>
+          <article class="panel">
+            <span class="eyebrow">HOW THEY PLAY</span>
+            <h2>Devices & browsers</h2>
+            <div id="devices"></div>
+            <div id="browsers"></div>
+          </article>
+          <article class="panel">
+            <span class="eyebrow">ON THE MENU</span>
+            <h2>Coffee favourites</h2>
+            <div id="recipes"></div>
+          </article>
+        </section>
+        <section class="panel notes">
+          <div>
+            <span class="eyebrow">READ THE NUMBERS FAIRLY</span>
+            <h2>Good data, honest context.</h2>
+            <p id="insight">Waiting for your first players.</p>
+          </div>
+          <ul>
+            <li>
+              A visitor means an anonymous browser profile, not a verified
+              person. Reloads count as visits; multiple sessions in this range
+              count as returning.
+            </li>
+            <li>
+              Play time excludes hidden tabs, pauses, help, settings and
+              title/summary screens. It is measured foreground time, not proof
+              of attention.
+            </li>
+            <li>
+              Self-reported gameplay telemetry can be blocked or lost on exit.
+              Bots are filtered on a best-effort basis.
+            </li>
+            <li>
+              Game money is simulated café revenue. It is not real income.
+            </li>
+          </ul>
+        </section>
+        <footer>
+          <span id="updated">—</span
+          ><span
+            >Refreshes every minute while visible ·
+            <a href="/privacy.html">Data & privacy</a> ·
+            <a
+              href="https://docs.google.com/spreadsheets/d/1rRC6NmheJbyRoFeRAzV6yj2iKElymc1SvQEnZJqYkNo/edit"
+              target="_blank"
+              rel="noopener"
+              >Feedback responses ↗</a
+            ></span
+          >
+        </footer>
+      </div>
+    </main>
+    <script src="/stats/app.js" defer></script>
+  </body>
+</html>
