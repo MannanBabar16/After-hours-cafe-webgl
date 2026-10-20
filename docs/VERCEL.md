@@ -13,3 +13,5 @@ The existing project `prj_TCg3dnxeeIfiFs7rEYK347V3SFCl` was reused. The 13 Octob
 Google Forms setup and the feedback question source are in [docs/feedback/SETUP.md](feedback/SETUP.md). The owner's [public feedback form](https://docs.google.com/forms/d/e/1FAIpQLSdX1oLnKoee8dOPirDG1TEcgjdKUUTwxdzktdDolkFt-2Wicw/viewform?usp=header) was verified without sign-in through all three routes and inserted into the LinkedIn caption. Its custom header/theme still needs applying in the Google editor.
 
 Browser saves are local to an origin. Existing saves on the Sites domain do not automatically appear on the Vercel domain.
+
+The 20 October analytics deployment `dpl_3cFKHT8xv9rxahKjnLuEyEPaWVMY` reached READY from `18b5e03dacbe3d497700d279e87a208434604d9e`. The public alias and private owner dashboard were verified end to end against actual private storage, including retry deduplication and a playable game when collection is blocked. Generated traffic was isolated in the test cohort. See [the production analytics check](qa/analytics-live.json).
